@@ -2,12 +2,10 @@ package com.whoiszxl.tues.common.bean;
 
 import com.whoiszxl.tues.common.enums.CloneDirectionEnum;
 import com.whoiszxl.tues.common.utils.BeanCopierUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ObjectUtils;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +15,7 @@ import java.util.List;
  * @author zhouxiaolong
  * @date 2021/3/17
  */
+@Slf4j
 public class AbstractObject {
 
     public static final String VO = "VO";
@@ -28,8 +27,13 @@ public class AbstractObject {
      * @return 目标对象
      * @throws Exception
      */
-    public <T> T clone(Class<T> clazz) throws Exception {
-        T target = clazz.getDeclaredConstructor().newInstance();
+    public <T> T clone(Class<T> clazz) {
+        T target = null;
+        try {
+            target = clazz.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            log.error("对象clone失败：", e);
+        }
         BeanCopierUtils.copyProperties(this, target);
         return target;
     }

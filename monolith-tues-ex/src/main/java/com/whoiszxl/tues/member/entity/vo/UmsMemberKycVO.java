@@ -24,6 +24,8 @@ public class UmsMemberKycVO extends AbstractObject implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @ApiModelProperty(value = "主键ID")
+    private Long id;
 
     @ApiModelProperty(value = "用户ID")
     private Long memberId;

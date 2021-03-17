@@ -6,15 +6,25 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: ENC(DI9iXNL4PUxC4zOhd4I00cbzB0TLicu9eb3RHNio4dDm6uinKLOhzuae0O73E6ImWCrcvSoc466PwyEkz5GP9kgUPcx+EGtSMFGiE4eLHfcQVz4FNP5cIA3AiFsnmClLLCPwrPwOcmi5ABG7xVfY4UyIrVAwBjZz9FvbZ4+2x2T1g0JH01x/EPC2J50xmqG6)
-    username: ENC(le89BOO33fezSsQl/4kzpg==)
-    password: ENC(K6vVvNk53bp61G9ncufyZm9qes75AwEO)
+    url: ENC(yQjR7rB+l+bE+9vLPcSpZNfxtQegBU5qBLSwtPlLdBHzNpE28tJq3btv6WMIIPP+28LomBkgZXbAA/KTLmT7ROnUlNpjDEuV7Uae1hDA1kS05x7SJKsKCD+/0E61ZIyp7cGNmc1FgJgmAeHLK4Q1M1V9+COjoKJB8/N/ewB9JmGeG1ZOxNz1PA6Msy1m1yMKxcDah9oa7Ow=)
+    username: ENC(KL/vpOrra3OsvkoGO9VKnA==)
+    password: ENC(fJ4mgRXE2KFNdt5riC0oYtG+LHA2Q4ex)
 
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+  redis:
+    host: aliyun.whoiszxl.com
+    port: 6379
+    password: ENC(HckT7CIUqeogjP/2PdYeU2a1MX9NvHM1)
 
 jasypt:
   encryptor:
     password: yoursecret #配置EncryptPropertiesUtils工具类里填写的秘钥，最好在命令行注入参数
+
+
+jwt:
+  config:
+    key: whoiszxl
+    ttl: 36000000

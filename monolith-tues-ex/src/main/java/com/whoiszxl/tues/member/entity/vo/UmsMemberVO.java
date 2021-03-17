@@ -29,12 +29,6 @@ public class UmsMemberVO extends AbstractObject implements Serializable {
     @ApiModelProperty(value = "用户名")
     private String username;
 
-    @ApiModelProperty(value = "密码")
-    private String password;
-
-    @ApiModelProperty(value = "交易密码")
-    private String tradePassword;
-
     @ApiModelProperty(value = "真实姓名")
     private String realName;
 

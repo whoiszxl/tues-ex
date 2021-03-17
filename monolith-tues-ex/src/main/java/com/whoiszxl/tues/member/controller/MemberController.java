@@ -106,6 +106,7 @@ public class MemberController {
         return Result.buildSuccess("注册成功");
     }
 
+    @ApiOperation(value = "登录", notes = "使用手机号或用户名与密码进行登录", response = Map.class)
     @PostMapping("/login")
     public Result<Map<String, Object>> login(@RequestBody LoginParam loginParam){
         //校验手机号的密码

@@ -21,10 +21,17 @@ spring:
 
 jasypt:
   encryptor:
-    password: yoursecret #配置EncryptPropertiesUtils工具类里填写的秘钥，最好在命令行注入参数
+    password: whoiszxy #配置EncryptPropertiesUtils工具类里填写的秘钥，最好在命令行注入参数
 
 
 jwt:
   config:
     key: whoiszxl
     ttl: 36000000
+
+aliyun:
+  sms:
+    accessKeyId:
+    accessKeySecret:
+    template_code: SMS_99220057
+    sign_name: zxlvoid验证码

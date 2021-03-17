@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import javax.persistence.Id;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -25,6 +26,9 @@ public class UmsMemberWallet extends AbstractObject implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @ApiModelProperty(value = "主键ID")
+    private Long id;
 
     @ApiModelProperty(value = "用户ID")
     private Long memberId;

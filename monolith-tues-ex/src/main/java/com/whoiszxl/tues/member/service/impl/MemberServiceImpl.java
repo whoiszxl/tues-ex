@@ -6,6 +6,7 @@ import com.whoiszxl.tues.common.enums.MemberRoleEnum;
 import com.whoiszxl.tues.common.enums.MemberStatusEnum;
 import com.whoiszxl.tues.common.enums.SwitchStatusEnum;
 import com.whoiszxl.tues.common.enums.redis.MemberRedisPrefixEnum;
+import com.whoiszxl.tues.common.utils.IdWorker;
 import com.whoiszxl.tues.common.utils.JwtUtils;
 import com.whoiszxl.tues.common.utils.RedisUtils;
 import com.whoiszxl.tues.member.dao.MemberDao;
@@ -45,6 +46,9 @@ public class MemberServiceImpl implements MemberService {
     @Autowired
     private MemberDao memberDao;
 
+    @Autowired
+    private IdWorker idWorker;
+
     @Override
     public boolean checkVerifyCode(String mobile, String memberVerifyCode) {
         String redisVerifyCode = redisUtils.get(MemberRedisPrefixEnum.USER_REGISTER_PHONE_CODE.getKey() + mobile);
@@ -54,16 +58,20 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void registerToDb(RegisterParam registerParam) {
         UmsMember member = new UmsMember();
+        member.setId(idWorker.nextId());
         member.setUsername(registerParam.getMobile());
         member.setPassword(encoder.encode(registerParam.getPassword()));
         member.setPhone(registerParam.getMobile());
         member.setLoginCount(0);
+        member.setLoginErrorCount(0);
+        member.setTradeCount(0);
         member.setTradeFeeRate(new BigDecimal("0.001"));
         member.setGradeLevel(MemberGradeLevelEnum.LEVEL_ONE.getLevel());
         member.setDayWithdrawCount(1);
         member.setStatus(MemberStatusEnum.MEMBER_VAILD.getStatus());
         member.setUpdatedAt(LocalDateTime.now());
         member.setCreatedAt(LocalDateTime.now());
+        memberDao.save(member);
     }
 
     @Override
@@ -74,13 +82,15 @@ public class MemberServiceImpl implements MemberService {
             umsMember.setLastLogin(LocalDateTime.now());
             umsMember.setUpdatedAt(LocalDateTime.now());
             umsMember.setLoginCount(umsMember.getLoginCount() + 1);
+            UmsMember result = memberDao.save(umsMember);
+            return result.clone(UmsMemberDTO.class);
         }else {
             //登录失败，更新错误次数
             umsMember.setUpdatedAt(LocalDateTime.now());
             umsMember.setLoginErrorCount(umsMember.getLoginErrorCount() + 1);
+            memberDao.save(umsMember);
+            return null;
         }
-        UmsMember result = memberDao.save(umsMember);
-        return result.clone(UmsMemberDTO.class);
     }
 
     @Override

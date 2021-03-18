@@ -4,16 +4,16 @@ import com.aliyuncs.CommonResponse;
 import com.whoiszxl.tues.common.bean.Result;
 import com.whoiszxl.tues.common.bean.StatusCode;
 import com.whoiszxl.tues.common.enums.MemberRoleEnum;
-import com.whoiszxl.tues.common.enums.redis.MemberRedisPrefixEnum;
-import com.whoiszxl.tues.common.exception.custom.JwtAuthException;
-import com.whoiszxl.tues.common.utils.*;
+import com.whoiszxl.tues.common.utils.JwtUtils;
+import com.whoiszxl.tues.common.utils.RedisUtils;
+import com.whoiszxl.tues.common.utils.RegexUtils;
+import com.whoiszxl.tues.common.utils.ValidateUtils;
 import com.whoiszxl.tues.member.entity.dto.UmsMemberDTO;
 import com.whoiszxl.tues.member.entity.param.LoginParam;
 import com.whoiszxl.tues.member.entity.param.RegisterParam;
 import com.whoiszxl.tues.member.entity.param.SmsParam;
 import com.whoiszxl.tues.member.entity.vo.UmsMemberVO;
 import com.whoiszxl.tues.member.service.MemberService;
-import com.whoiszxl.tues.thirdparty.sms.SMSProvider;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
-优化
+
 /**
  * 用户会员接口
  *

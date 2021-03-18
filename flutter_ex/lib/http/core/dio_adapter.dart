@@ -13,6 +13,7 @@ class DioAdapter extends ExNetAdapter {
     var error;
     try {
 
+      //对不同method做不同适配
       switch (request.requestMethod()) {
         case RequestMethod.GET:
           response = await Dio().get(request.url(), options: options);
@@ -29,7 +30,6 @@ class DioAdapter extends ExNetAdapter {
         default:
           response = await Dio().post(request.url(), data: request.params, options: options);
       }
-
     } on DioError catch (e) {
       error = e;
       response = e.response;

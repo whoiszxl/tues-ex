@@ -23,6 +23,7 @@ class ExNet {
     var error;
     try {
       response = await send(request);
+      printLog(response);
     } on ExNetError catch (e) {
       error = e;
       response = e.data;

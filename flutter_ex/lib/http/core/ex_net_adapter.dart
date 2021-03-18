@@ -29,7 +29,7 @@ class ExNetResponse<T> {
   /// 状态信息
   String statusMessage;
 
-  ///扩展信息
+  /// 扩展信息
   dynamic extra;
 
   @override

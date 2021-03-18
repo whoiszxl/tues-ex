@@ -17,7 +17,7 @@ abstract class BaseRequest {
   var pathParams;
 
   ///是否开启https，默认开启
-  var useHttps = true;
+  var useHttps = false;
 
   ///请求参数
   Map<String, String> params = Map();
@@ -25,7 +25,7 @@ abstract class BaseRequest {
 
   
   String domainName() {
-    return "aliyun.whoiszxl.com";
+    return "aliyun.whoiszxl.com:10000";
   }
 
   ///重写配置请求方式

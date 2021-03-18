@@ -1,8 +1,11 @@
 package com.whoiszxl.tues.member.service;
 
+import com.aliyuncs.CommonResponse;
+import com.whoiszxl.tues.common.bean.Result;
 import com.whoiszxl.tues.member.entity.UmsMember;
 import com.whoiszxl.tues.member.entity.dto.UmsMemberDTO;
 import com.whoiszxl.tues.member.entity.param.RegisterParam;
+import com.whoiszxl.tues.member.entity.param.SmsParam;
 
 import java.util.Map;
 
@@ -56,4 +59,17 @@ public interface MemberService {
      * @return
      */
     UmsMemberDTO getMemberInfoByMemberId(Long memberId);
+
+    /**
+     * 注册逻辑
+     * @param registerParam 注册参数
+     */
+    void register(RegisterParam registerParam);
+
+    /**
+     * 发送注册短信
+     * @param mobile 短信参数
+     * @return
+     */
+    Result<Boolean> sendRegisterSms(String mobile);
 }

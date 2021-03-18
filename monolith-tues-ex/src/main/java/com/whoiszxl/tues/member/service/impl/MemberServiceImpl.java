@@ -1,28 +1,32 @@
 package com.whoiszxl.tues.member.service.impl;
 
 import com.google.common.collect.Maps;
+import com.whoiszxl.tues.common.bean.Result;
 import com.whoiszxl.tues.common.enums.MemberGradeLevelEnum;
 import com.whoiszxl.tues.common.enums.MemberRoleEnum;
 import com.whoiszxl.tues.common.enums.MemberStatusEnum;
 import com.whoiszxl.tues.common.enums.SwitchStatusEnum;
 import com.whoiszxl.tues.common.enums.redis.MemberRedisPrefixEnum;
+import com.whoiszxl.tues.common.exception.custom.JwtAuthException;
 import com.whoiszxl.tues.common.utils.IdWorker;
 import com.whoiszxl.tues.common.utils.JwtUtils;
+import com.whoiszxl.tues.common.utils.RandomUtils;
 import com.whoiszxl.tues.common.utils.RedisUtils;
 import com.whoiszxl.tues.member.dao.MemberDao;
 import com.whoiszxl.tues.member.entity.UmsMember;
 import com.whoiszxl.tues.member.entity.dto.UmsMemberDTO;
 import com.whoiszxl.tues.member.entity.param.RegisterParam;
 import com.whoiszxl.tues.member.service.MemberService;
+import com.whoiszxl.tues.thirdparty.sms.SMSProvider;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Map;
 
 /**
@@ -48,6 +52,12 @@ public class MemberServiceImpl implements MemberService {
 
     @Autowired
     private IdWorker idWorker;
+
+    @Autowired
+    private SMSProvider smsProvider;
+
+    @Value("${aliyun.sms.mock}")
+    private Boolean mock;
 
     @Override
     public boolean checkVerifyCode(String mobile, String memberVerifyCode) {
@@ -112,5 +122,38 @@ public class MemberServiceImpl implements MemberService {
     public UmsMemberDTO getMemberInfoByMemberId(Long memberId) {
         UmsMember member = memberDao.findUmsMemberByIdAndStatus(memberId, SwitchStatusEnum.STATUS_OPEN.getStatusCode());
         return member.clone(UmsMemberDTO.class);
+    }
+
+    @Override
+    public void register(RegisterParam registerParam) {
+        //校验缓存中的验证码
+        boolean isSuccess = checkVerifyCode(registerParam.getMobile(), registerParam.getCode());
+        if(!isSuccess) {
+            throw new JwtAuthException();
+        }
+
+        //入库并清除验证码
+        registerToDb(registerParam);
+        removeVerifyInRedis(registerParam.getMobile());
+    }
+
+
+    @Override
+    public Result sendRegisterSms(String mobile) {
+
+        //生成验证码
+        String code = RandomUtils.generateNumberString(6);
+
+        //存入redis
+        redisUtils.setEx(MemberRedisPrefixEnum.USER_REGISTER_PHONE_CODE.getKey() + mobile,
+                code,
+                MemberRedisPrefixEnum.USER_REGISTER_PHONE_CODE.getTime(),
+                MemberRedisPrefixEnum.USER_REGISTER_PHONE_CODE.getUnit());
+
+        if(Boolean.FALSE.equals(mock)) {
+           return smsProvider.sendVerifyMessage(mobile, code);
+        }
+
+        return Result.buildSuccess("mock send:" + code);
     }
 }

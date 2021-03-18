@@ -57,9 +57,11 @@ public class AliyunSMSProvider implements SMSProvider {
         request.putQueryParameter("TemplateParam", params);
         try {
             CommonResponse response = client.getCommonResponse(request);
-            return Result.buildSuccess(response);
+            log.info("短信发送到{}，模板码为:{}，参数为:{}, 返回信息:{}", mobile, templateCode, params, response);
+            return Result.buildSuccess();
         } catch (ClientException e) {
-            return Result.buildError(e.getMessage());
+            log.error("短信发送失败  到{}，模板码为:{}，参数为:{}, 返回信息:{}", mobile, templateCode, params, e.getMessage());
+            return Result.buildError();
         }
     }
 

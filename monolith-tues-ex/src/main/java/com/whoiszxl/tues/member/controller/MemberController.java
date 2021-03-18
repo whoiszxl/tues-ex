@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
-
+优化
 /**
  * 用户会员接口
  *
@@ -43,9 +43,6 @@ public class MemberController {
     @Autowired
     private HttpServletRequest request;
 
-    @Autowired
-    private SMSProvider smsProvider;
-
     /**
      * 发送短信接口
      * @param smsRequest mobile 手机号
@@ -53,24 +50,13 @@ public class MemberController {
      */
     @ApiOperation(value = "发送短信接口", notes = "发送短信接口", response = CommonResponse.class)
     @PostMapping("/sendVerifySms")
-    public Result<CommonResponse> sendVerifySms(@RequestBody SmsParam smsParam) {
+    public Result sendVerifySms(@RequestBody SmsParam smsParam) {
         String mobile = smsParam.getMobile();
         //对手机号进行校验
         if(!RegexUtils.checkPhone(mobile)) {
             return Result.buildError();
         }
-
-        //生成验证码
-        String code = RandomUtils.generateNumberString(6);
-
-        //存入redis
-        redisUtils.setEx(MemberRedisPrefixEnum.USER_REGISTER_PHONE_CODE.getKey() + mobile,
-                code,
-                MemberRedisPrefixEnum.USER_REGISTER_PHONE_CODE.getTime(),
-                MemberRedisPrefixEnum.USER_REGISTER_PHONE_CODE.getUnit());
-
-        Result result = smsProvider.sendVerifyMessage(mobile, code);
-        return result;
+        return memberService.sendRegisterSms(smsParam.getMobile());
     }
 
     @ApiOperation(value = "查询当前用户信息", notes = "通过JWT查询", response = UmsMemberVO.class)
@@ -93,15 +79,7 @@ public class MemberController {
         ValidateUtils.checkPasswordLevel(registerParam.getPassword());
         ValidateUtils.checkPhoneRegex(registerParam.getMobile());
 
-        //校验缓存中的验证码
-        boolean isSuccess = memberService.checkVerifyCode(registerParam.getMobile(), registerParam.getCode());
-        if(!isSuccess) {
-            throw new JwtAuthException();
-        }
-
-        //入库并清除验证码
-        memberService.registerToDb(registerParam);
-        memberService.removeVerifyInRedis(registerParam.getMobile());
+        memberService.register(registerParam);
 
         return Result.buildSuccess("注册成功");
     }

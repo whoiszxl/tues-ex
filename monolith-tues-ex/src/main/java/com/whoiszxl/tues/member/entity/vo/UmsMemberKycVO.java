@@ -1,5 +1,6 @@
 package com.whoiszxl.tues.member.entity.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.whoiszxl.tues.common.bean.AbstractObject;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -60,9 +61,11 @@ public class UmsMemberKycVO extends AbstractObject implements Serializable {
     @ApiModelProperty(value = "六位视频认证随机数")
     private String videoRandom;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createdAt;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "更新时间")
     private LocalDateTime updatedAt;
 

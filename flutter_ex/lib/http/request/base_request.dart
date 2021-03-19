@@ -16,7 +16,7 @@ abstract class BaseRequest {
   ///路径参数
   var pathParams;
 
-  ///是否开启https，默认开启
+  ///是否开启https，默认关闭
   var useHttps = false;
 
   ///请求参数
@@ -70,6 +70,12 @@ abstract class BaseRequest {
   ///添加header
   BaseRequest addHeader(String k, Object v) {
     headers[k] = v.toString();
+    return this;
+  }
+
+  ///添加token
+  BaseRequest addHeaderToken(String token) {
+    headers['Authorization'] = "Bearer " + token;
     return this;
   }
 

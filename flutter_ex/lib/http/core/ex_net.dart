@@ -23,7 +23,6 @@ class ExNet {
     var error;
     try {
       response = await send(request);
-      printLog(response);
     } on ExNetError catch (e) {
       error = e;
       response = e.data;
@@ -37,7 +36,6 @@ class ExNet {
       printLog(error);
     }
     var result = response.data;
-    printLog(result);
     var status = response.statusCode;
     switch (status) {
       case 200:

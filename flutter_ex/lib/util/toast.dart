@@ -4,10 +4,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 void showErrorToast(String text) {
   Fluttertoast.showToast(
     msg: text,
-    toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.CENTER,
+    toastLength: Toast.LENGTH_LONG,
+    gravity: ToastGravity.BOTTOM,
     backgroundColor: Colors.red,
-    textColor: Colors.white
+    textColor: Colors.white,
   );
 }
 
@@ -15,7 +15,7 @@ void showErrorToast(String text) {
 void showToast(String text) {
   Fluttertoast.showToast(
     msg: text,
-    toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.CENTER,
+    toastLength: Toast.LENGTH_LONG,
+    gravity: ToastGravity.BOTTOM,
   );
 }

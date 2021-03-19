@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ex/db/ex_cache.dart';
+import 'package:flutter_ex/page/login_page.dart';
 import 'package:flutter_ex/util/color.dart';
 import 'package:flutter_ex/page/register_page.dart';
 

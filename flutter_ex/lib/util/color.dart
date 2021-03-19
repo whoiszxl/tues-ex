@@ -18,6 +18,8 @@ const MaterialColor white = const MaterialColor(
 
 ///主色调
 const MaterialColor primary = const MaterialColor(
-  0xfffb7299,
-  const <int, Color>{50: const Color(0xffff9db5)},
+  0xFF1652F0,
+  const <int, Color>{
+    50: const Color.fromARGB(255, 22, 82, 240)
+  },
 );

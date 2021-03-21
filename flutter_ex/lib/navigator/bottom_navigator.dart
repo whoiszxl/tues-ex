@@ -54,9 +54,9 @@ class _BottomNavigatorState extends State<BottomNavigator> {
         
         items: [
           _bottomItem('首页', Icons.home, 0),
-          _bottomItem('行情', Icons.music_off, 1),
-          _bottomItem('交易', Icons.search, 2),
-          _bottomItem('资产', Icons.money, 3),
+          _bottomItem('行情', Icons.trending_up, 1),
+          _bottomItem('交易', Icons.swap_calls, 2),
+          _bottomItem('资产', Icons.account_balance_wallet, 3),
         ],
       ),
     );

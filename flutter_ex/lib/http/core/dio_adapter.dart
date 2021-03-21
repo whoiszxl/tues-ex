@@ -38,7 +38,7 @@ class DioAdapter extends ExNetAdapter {
       ///抛出ExNetError
       throw ExNetError(response?.statusCode ?? -1, error.toString(), data: buildResponse(response, request));
     }
-    return buildResponse(response, request);
+       return buildResponse(response, request);
   }
 
   ///构建ExNetResponse

@@ -1,5 +1,6 @@
 import 'package:flutter_ex/http/core/dio_adapter.dart';
 import 'package:flutter_ex/http/core/ex_error.dart';
+import 'package:flutter_ex/http/core/ex_interceptor.dart';
 import 'package:flutter_ex/http/core/ex_net_adapter.dart';
 import 'package:flutter_ex/http/request/base_request.dart';
 
@@ -8,6 +9,8 @@ class ExNet {
   ExNet ._();
 
   static ExNet _instance;
+
+  ExErrorInterceptor _exErrorInterceptor;
 
   ///单例获取实例
   static ExNet getInstance() {
@@ -37,20 +40,32 @@ class ExNet {
     }
     var result = response.data;
     var status = response.statusCode;
+    var exError;
+
     switch (status) {
       case 200:
         return result;
         break;
       case 401:
-        throw NeedLogin();
+        exError = NeedLogin();
         break;
       case 403:
-        throw NeedAuth(result.toString(), data: result);
+        exError = NeedAuth(result.toString(), data: result);
         break;
       default:
-        throw ExNetError(status, result.toString(), data: result);
+        exError = ExNetError(status, result.toString(), data: result);
         break;
     }
+
+    if(_exErrorInterceptor != null) {
+      _exErrorInterceptor(exError);
+    }
+
+    throw exError;
+  }
+
+  void setErrorInterceptor(ExErrorInterceptor interceptor) {
+    _exErrorInterceptor = interceptor;
   }
 
   Future<ExNetResponse<T>> send<T>(BaseRequest request) async {

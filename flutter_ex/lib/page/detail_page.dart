@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_ex/navigator/ex_navigator.dart';
+import 'package:flutter_ex/model/coin_model.dart';
 
-class HomePage extends StatefulWidget {
+class DetailPage extends StatefulWidget {
+
+  final CoinModel coinModel;
+  const DetailPage(this.coinModel);
+
   @override
-  _HomePageState createState() => _HomePageState();
+  _DetailPageState createState() => _DetailPageState();
 }
 
-class _HomePageState extends State<HomePage>
+class _DetailPageState extends State<DetailPage>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
 
@@ -25,14 +29,10 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: Container(
         child: Center(
-          child: InkWell(
-            child: Text('登录'),
-            onTap: () {
-              ExNavigator.getInstance().onJumpTo(RouteStatus.login);
-            },
-          ),
+          child: Text('币种详情 : ${widget.coinModel.coinId}'),
         ),
       ),
     );

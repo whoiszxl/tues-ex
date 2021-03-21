@@ -19,6 +19,11 @@ class ExCache {
     }
   }
 
+  ///future預初始化
+  static Future<ExCache> preInit() async {
+    return getInstance();
+  }
+
   ///获取sp实例
   static ExCache getInstance() {
     if(_instance == null) {

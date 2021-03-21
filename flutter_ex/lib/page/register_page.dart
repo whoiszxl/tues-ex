@@ -3,6 +3,7 @@ import 'package:flustars/flustars.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ex/http/core/ex_error.dart';
+import 'package:flutter_ex/navigator/ex_navigator.dart';
 import 'package:flutter_ex/util/validate_util.dart';
 import 'package:flutter_ex/widget/appbar.dart';
 import 'package:flutter_ex/widget/login_input.dart';
@@ -16,9 +17,7 @@ import 'package:flutter_ex/widget/send_sms_button.dart';
 ///注册页面
 class RegisterPage extends StatefulWidget {
 
-  final VoidCallback onJumpToLogin;
-
-  const RegisterPage({Key key, this.onJumpToLogin}) : super(key: key);
+  const RegisterPage({Key key}) : super(key: key);
 
   @override
   _RegisterPageState createState() => _RegisterPageState();
@@ -37,7 +36,9 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar("注册", "登录", widget.onJumpToLogin),
+      appBar: appBar("注册", "登录", () {
+        ExNavigator.getInstance().onJumpTo(RouteStatus.login);
+      }),
 
       body: Container(
         child: ListView(
@@ -116,10 +117,6 @@ class _RegisterPageState extends State<RegisterPage> {
       var result = await MemberDao.sendSmsVerifyCode(username);
       if (verifyResult(result)) {
         showToast('发送成功' + result['data']);
-        if (widget.onJumpToLogin != null) {
-          widget.onJumpToLogin();
-        }
-
       } else {
         print(result['message']);
         showErrorToast(result['message']);
@@ -141,12 +138,9 @@ class _RegisterPageState extends State<RegisterPage> {
       }
 
       var result = await MemberDao.register(username, verifyCode, password, rePassword);
-      if (result) {
-        print('注册成功');
+      if (verifyResult(result)) {
         showToast('注册成功');
-        if (widget.onJumpToLogin != null) {
-          widget.onJumpToLogin();
-        }
+        ExNavigator.getInstance().onJumpTo(RouteStatus.login);
       } else {
         print(result['message']);
         showErrorToast(result['message']);

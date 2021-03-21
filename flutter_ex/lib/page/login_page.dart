@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ex/dao/member_dao.dart';
 import 'package:flutter_ex/http/core/ex_error.dart';
+import 'package:flutter_ex/navigator/ex_navigator.dart';
 import 'package:flutter_ex/util/string_util.dart';
 import 'package:flutter_ex/util/toast.dart';
 import 'package:flutter_ex/util/validate_util.dart';
@@ -27,7 +28,9 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar("登录", "注册", () {}),
+      appBar: appBar("登录", "注册", () {
+        ExNavigator.getInstance().onJumpTo(RouteStatus.register);
+      }),
       body: Container(
         child: ListView(
           children: [
@@ -84,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
       var result = await MemberDao.login(username, password);
       if(verifyResult(result)) {
         showToast("登录成功");
-        //todo 跳转主页
+        ExNavigator.getInstance().onJumpTo(RouteStatus.home);
       }else {
         showErrorToast(result['message']);
       }

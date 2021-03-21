@@ -76,4 +76,9 @@ class MemberDao {
 
     return result;
   }
+
+  ///获取本地token
+  static getLocalToken() {
+    return ExCache.getInstance().get(LOCAL_TOKEN);
+  }
 }

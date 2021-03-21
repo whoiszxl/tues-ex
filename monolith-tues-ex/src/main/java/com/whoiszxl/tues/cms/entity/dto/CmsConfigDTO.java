@@ -1,4 +1,4 @@
-package com.whoiszxl.tues.cms.entity;
+package com.whoiszxl.tues.cms.entity.dto;
 
 import com.whoiszxl.tues.common.bean.AbstractObject;
 import io.swagger.annotations.ApiModelProperty;
@@ -6,9 +6,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -21,15 +18,9 @@ import java.time.LocalDateTime;
  * @since 2021-03-17
  */
 @Data
-@Table(name = "cms_config")
-@Entity
-public class CmsConfig extends AbstractObject implements Serializable {
+public class CmsConfigDTO extends AbstractObject implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @ApiModelProperty(value = "主键ID")
-    private Long id;
 
     @ApiModelProperty(value = "配置键")
     private String key;

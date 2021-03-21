@@ -1,5 +1,5 @@
 class CoinModel {
-  int coinId;
+  String coinId;
 
   CoinModel(this.coinId);
 }

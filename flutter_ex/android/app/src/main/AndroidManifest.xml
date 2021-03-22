@@ -3,6 +3,8 @@
    <application
         android:label="flutter_ex"
         android:icon="@mipmap/ic_launcher">
+           android:usesCleartextTraffic="true"
+           tools:targetApi="28"
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

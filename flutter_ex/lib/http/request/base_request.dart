@@ -25,7 +25,7 @@ abstract class BaseRequest {
 
   
   String domainName() {
-    return "aliyun.whoiszxl.com:10000";
+    return "aliyun.whoiszxl.com:9999";
   }
 
   ///重写配置请求方式

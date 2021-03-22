@@ -3,8 +3,10 @@ package com.whoiszxl.tues.common.config;
 import com.whoiszxl.tues.common.interceptor.JwtInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * jwt配置
@@ -12,7 +14,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
  * @author zhouxiaolong
  */
 @Configuration
-public class JwtConfig extends WebMvcConfigurationSupport {
+public class JwtConfig implements WebMvcConfigurer {
 
     @Autowired
     private JwtInterceptor jwtInterceptor;
@@ -21,23 +23,23 @@ public class JwtConfig extends WebMvcConfigurationSupport {
             "/**/login",
             "/**/sendVerifySms",
             "/**/register",
-            "/home/**"
+            "/home/**",
     };
 
     String[] swaggerPatterns = new String[]{
-            "/webjars/**",
-            "/swagger-ui/index.html",
             "/swagger-resources/**",
+            "/webjars/**",
             "/v3/**",
-            "/swagger-ui/**",
+            "/swagger-ui.html/**",
+            "/swagger-ui/**"
     };
 
     @Override
-    protected void addInterceptors(InterceptorRegistry registry) {
-        registry
-                .addInterceptor(jwtInterceptor) //添加jwt拦截器
-                .addPathPatterns("/**") //过滤规则
-                .excludePathPatterns(apiPatterns)
-                .excludePathPatterns(swaggerPatterns); //排除地址规则
+    public void addInterceptors(InterceptorRegistry registry) {
+
+        InterceptorRegistration registration = registry.addInterceptor(jwtInterceptor);
+        registration.addPathPatterns("/**");
+        registration.excludePathPatterns();
+        registration.excludePathPatterns(apiPatterns);
     }
 }

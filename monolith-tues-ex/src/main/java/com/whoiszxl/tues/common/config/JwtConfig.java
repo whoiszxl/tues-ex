@@ -21,6 +21,7 @@ public class JwtConfig extends WebMvcConfigurationSupport {
             "/**/login",
             "/**/sendVerifySms",
             "/**/register",
+            "/home/**"
     };
 
     String[] swaggerPatterns = new String[]{

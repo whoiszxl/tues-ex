@@ -2,8 +2,11 @@ package com.whoiszxl.tues.common.utils;
 
 import org.springframework.cglib.beans.BeanCopier;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * Bean拷贝工具类
@@ -40,6 +43,23 @@ public class BeanCopierUtils {
             beanCopier = beanCopierCacheMap.get(cacheKey);
         }
         beanCopier.copy(source, target, null);
+    }
+
+
+    /**
+     * 拷贝 List
+     * @param sources list源
+     * @param target list目标
+     * @return
+     */
+    public static <S, T> List<T> copyListProperties(List<S> sources, Supplier<T> target) {
+        List<T> list = new ArrayList<>(sources.size());
+        for (S source : sources) {
+            T t = target.get();
+            copyProperties(source, t);
+            list.add(t);
+        }
+        return list;
     }
 
     private BeanCopierUtils() {}

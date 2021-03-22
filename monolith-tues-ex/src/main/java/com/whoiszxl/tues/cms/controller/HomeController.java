@@ -4,6 +4,7 @@ import com.whoiszxl.tues.cms.entity.dto.CmsBannerDTO;
 import com.whoiszxl.tues.cms.entity.vo.CmsBannerVO;
 import com.whoiszxl.tues.cms.service.HomeService;
 import com.whoiszxl.tues.common.bean.Result;
+import com.whoiszxl.tues.common.utils.BeanCopierUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +34,7 @@ public class HomeController {
     public Result<List<CmsBannerVO>> banner(@PathVariable("type") Integer type) {
 
         List<CmsBannerDTO> cmsBannerDTOS = homeService.bannerList(type);
-
-        List<CmsBannerVO> cmsBannerVOList = new ArrayList<>(cmsBannerDTOS.size());
-        for (CmsBannerDTO cmsBannerDTO : cmsBannerDTOS) {
-            cmsBannerVOList.add(cmsBannerDTO.clone(CmsBannerVO.class));
-        }
-
-        return Result.buildSuccess(cmsBannerVOList);
+        return Result.buildSuccess(BeanCopierUtils.copyListProperties(cmsBannerDTOS, CmsBannerVO::new));
     }
 
 }

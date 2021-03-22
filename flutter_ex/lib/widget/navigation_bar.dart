@@ -33,7 +33,6 @@ class NavigationBar extends StatelessWidget {
     }catch(e) {
       isWeb = true;
     }
-
     if(!isWeb) {
       _statusBarInit();
     }

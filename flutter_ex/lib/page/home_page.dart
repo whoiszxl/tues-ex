@@ -6,6 +6,7 @@ import 'package:flutter_ex/dao/home_dao.dart';
 import 'package:flutter_ex/model/banner_model.dart';
 import 'package:flutter_ex/widget/ex_banner.dart';
 import 'package:flutter_ex/widget/home_appbar.dart';
+import 'package:flutter_ex/widget/home_grid_navigator.dart';
 import 'package:flutter_ex/widget/navigation_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -40,11 +41,15 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
     return Scaffold(
       backgroundColor: Color.fromRGBO(244, 245, 245, 1.0),
       body: FutureBuilder(
-        future: HomeDao.bannerList("1"),
+        future: _loadData(),
         builder: (context, snapshot) {
           if(snapshot.hasData) {
             //var data=json.decode(snapshot.data.toString());
-            List<BannerModel> bannerList = snapshot.data;
+            List<dynamic> results = snapshot.data;
+            List<BannerModel> bannerList = results[0];
+            List<BannerModel> navigatorList = results[1];
+
+            print(snapshot.data);
 
             return EasyRefresh(
               footer: ClassicalFooter(
@@ -69,7 +74,9 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
                   Padding(
                     padding: EdgeInsets.only(left: 7, right: 7, top: 5),
                     child: ExBanner(bannerList),
-                  )
+                  ),
+
+                  HomeGridNavigator(navigatorList: navigatorList)
                 ],
               ),
             );
@@ -81,5 +88,14 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
         },
       ),
     );
+  }
+
+  ///加载数据
+  Future _loadData() async{
+
+    return Future.wait([
+      HomeDao.bannerList("1"), HomeDao.bannerList("2")
+    ]);
+
   }
 }

@@ -26,7 +26,7 @@ homeAppBar() {
               child: Padding(
                 padding: EdgeInsets.only(left: 15, right: 15),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(13),
                   child: Container(
                     padding: EdgeInsets.only(left: 10),
                     height: 32,

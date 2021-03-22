@@ -11,7 +11,7 @@ import 'package:flutter_ex/util/log_util.dart';
 class HomeDao {
 
   ///获取banner列表
-  static bannerList(String type) async {
+  static Future bannerList(String type) async {
     BannerRequest bannerRequest = new BannerRequest();
     bannerRequest.pathParams = type;
     var result = await ExNet.getInstance().request(bannerRequest);

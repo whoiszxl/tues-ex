@@ -22,14 +22,14 @@ class HomeGridNavigator extends StatelessWidget {
 
     var tempIndex = -1;
     return Container(
-      margin: EdgeInsets.only(top: 15),
-      height: ScreenUtil.getInstance().getHeight(130),
-      padding: EdgeInsets.all(3),
+      margin: EdgeInsets.only(top: 10),
+      height: ScreenUtil.getInstance().getHeight(132),
+      padding: EdgeInsets.all(1),
 
       child: GridView.count(
         physics: NeverScrollableScrollPhysics(),
         crossAxisCount: 5,
-        padding: EdgeInsets.all(2),
+        padding: EdgeInsets.all(1),
         children: navigatorList.map((item) {
           tempIndex++;
           return _item(context, item, tempIndex);
@@ -40,7 +40,7 @@ class HomeGridNavigator extends StatelessWidget {
 
 
   ///构建网格导航中的每个方块栏
-  Widget _item(BuildContext context,BannerModel item,index) {
+  Widget _item(BuildContext context, BannerModel item, index) {
     return InkWell(
       onTap: () {
         //TODO 创建点击事件
@@ -49,8 +49,8 @@ class HomeGridNavigator extends StatelessWidget {
 
       child: Column(
         children: <Widget>[
-          Icon(Icons.account_balance),
-          //Image.network(item.pic, width: ScreenUtil.getInstance().getWidth(60)),
+          //Icon(Icons.account_balance),
+          Image.network(item.pic, width: ScreenUtil.getInstance().getWidth(32)),
           Text(item.name)
         ],
       ),

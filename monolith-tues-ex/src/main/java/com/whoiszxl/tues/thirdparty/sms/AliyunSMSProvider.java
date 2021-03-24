@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 /**
  * 阿里云短信发送提供者
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 @Slf4j

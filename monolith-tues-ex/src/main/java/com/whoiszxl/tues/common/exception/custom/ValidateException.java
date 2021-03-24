@@ -5,7 +5,7 @@ import com.whoiszxl.tues.common.bean.Result;
 /**
  * 校验异常
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 public class ValidateException extends RuntimeException {

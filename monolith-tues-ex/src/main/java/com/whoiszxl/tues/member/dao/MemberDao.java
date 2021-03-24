@@ -5,7 +5,7 @@ import com.whoiszxl.tues.member.entity.UmsMember;
 /**
  * 用户Dao层接口
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 public interface MemberDao {

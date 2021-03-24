@@ -3,7 +3,7 @@ package com.whoiszxl.tues.common.exception.custom;
 /**
  * 断言异常
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 public class AssertException extends RuntimeException{

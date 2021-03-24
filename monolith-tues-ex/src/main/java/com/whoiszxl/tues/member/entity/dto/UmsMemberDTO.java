@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
  * @since 2021-03-17
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
 public class UmsMemberDTO extends AbstractObject implements Serializable {
 
     private static final long serialVersionUID = 1L;

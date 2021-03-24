@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * JWT校验拦截器
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  */
 @Component
 @Slf4j
@@ -37,7 +37,7 @@ public class JwtInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        log.info("jwt 拦截器运行了");
+        log.debug("jwt 拦截器运行了");
         final String header = request.getHeader("Authorization");
         if(StrUtil.isNotBlank(header) && header.startsWith("Bearer ")) {
             final String token = header.substring(7);

@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,8 +22,8 @@ import java.time.LocalDateTime;
  * @since 2021-03-17
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
+@Table(name = "ums_member_wallet")
+@Entity
 public class UmsMemberWallet extends AbstractObject implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -46,7 +48,7 @@ public class UmsMemberWallet extends AbstractObject implements Serializable {
     private BigDecimal usableBalance;
 
     @ApiModelProperty(value = "钱包，0：关闭 1：开启")
-    private Boolean status;
+    private Integer status;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createdAt;

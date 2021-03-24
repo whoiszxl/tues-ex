@@ -3,7 +3,7 @@ package com.whoiszxl.tues.common.bean;
 /**
  * 常用状态码
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 public class StatusCode {

@@ -5,7 +5,7 @@ import java.util.Random;
 /**
  * 随机数工具类
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 public class RandomUtils {

@@ -21,8 +21,6 @@ import java.time.LocalDateTime;
  * @since 2021-03-17
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
 @Table(name = "ums_member_address")
 @Entity
 public class UmsMemberAddress extends AbstractObject implements Serializable {
@@ -52,7 +50,7 @@ public class UmsMemberAddress extends AbstractObject implements Serializable {
     private String keystore;
 
     @ApiModelProperty(value = "钱包状态，0：关闭 1：开启")
-    private Boolean status;
+    private Integer status;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createdAt;

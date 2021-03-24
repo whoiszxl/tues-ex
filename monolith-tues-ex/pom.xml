@@ -148,6 +148,30 @@
         </dependency>
 
 
+        <!-- 钱包相关依赖 -->
+
+        <!-- web3j eth依赖 -->
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>core</artifactId>
+            <version>4.5.5</version>
+        </dependency>
+
+        <!-- bitcoin核心依赖 -->
+        <dependency>
+            <groupId>org.bitcoinj</groupId>
+            <artifactId>bitcoinj-core</artifactId>
+            <version>0.15.9</version>
+        </dependency>
+
+        <!-- bitcoin rpc请求工具类 -->
+        <dependency>
+            <groupId>wf.bitcoin</groupId>
+            <artifactId>bitcoin-rpc-client</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
+
     </dependencies>
 
 

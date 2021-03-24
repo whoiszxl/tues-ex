@@ -6,7 +6,7 @@ import com.whoiszxl.tues.member.entity.UmsMember;
 /**
  * 用户repository服务
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 public interface UmsMemberRepository extends BaseRepository<UmsMember> {

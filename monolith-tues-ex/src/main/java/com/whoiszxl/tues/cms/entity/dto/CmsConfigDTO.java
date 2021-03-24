@@ -32,7 +32,7 @@ public class CmsConfigDTO extends AbstractObject implements Serializable {
     private String remark;
 
     @ApiModelProperty(value = "配置状态，0：关闭 1：开启")
-    private Boolean status;
+    private Integer status;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createdAt;

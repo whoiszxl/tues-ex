@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * 校验密码强度
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 public class CheckPasswordUtils {

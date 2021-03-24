@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 /**
  * jwt配置
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  */
 @Configuration
 public class JwtConfig implements WebMvcConfigurer {

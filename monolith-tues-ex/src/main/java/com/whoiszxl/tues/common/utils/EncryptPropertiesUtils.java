@@ -9,7 +9,7 @@ import org.jasypt.encryption.pbe.config.EnvironmentPBEConfig;
  * 配置在yml里的敏感信息需要通过加密后再使用，保证系统安全。
  * 可以在jar包启动的时候在命令行指定运行秘钥。
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 @Slf4j
@@ -58,6 +58,8 @@ public class EncryptPropertiesUtils {
         encrypt("whoiszxy", dbUsername);
         encrypt("whoiszxy", dbPassword);
         encrypt("whoiszxy", redisPassword);
+
+        encrypt("whoiszxy", "https://ropsten.infura.io/v3/df5eacf1b6a244c38b89e4c10ef9bcb9");
 
 
         //decrypt("your secret", "DI9iXNL4PUxC4zOhd4I00cbzB0TLicu9eb3RHNio4dDm6uinKLOhzuae0O73E6ImWCrcvSoc466PwyEkz5GP9kgUPcx+EGtSMFGiE4eLHfcQVz4FNP5cIA3AiFsnmClLLCPwrPwOcmi5ABG7xVfY4UyIrVAwBjZz9FvbZ4+2x2T1g0JH01x/EPC2J50xmqG6");

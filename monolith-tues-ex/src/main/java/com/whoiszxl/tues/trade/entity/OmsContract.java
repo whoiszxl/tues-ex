@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,11 +22,15 @@ import java.time.LocalDateTime;
  * @since 2021-03-17
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
+@Table(name = "oms_contract")
+@Entity
 public class OmsContract extends AbstractObject implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    @Id
+    @ApiModelProperty(value = "主键ID")
+    private Long id;
 
     @ApiModelProperty(value = "交易对名称")
     private String contractName;
@@ -50,7 +57,7 @@ public class OmsContract extends AbstractObject implements Serializable {
     private Integer sort;
 
     @ApiModelProperty(value = "交易对状态，0：关闭 1：开启")
-    private Boolean status;
+    private Integer status;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createdAt;

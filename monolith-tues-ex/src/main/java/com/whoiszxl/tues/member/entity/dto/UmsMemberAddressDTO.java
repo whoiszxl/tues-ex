@@ -18,8 +18,6 @@ import java.time.LocalDateTime;
  * @since 2021-03-17
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
 public class UmsMemberAddressDTO extends AbstractObject implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -46,7 +44,7 @@ public class UmsMemberAddressDTO extends AbstractObject implements Serializable 
     private String keystore;
 
     @ApiModelProperty(value = "钱包状态，0：关闭 1：开启")
-    private Boolean status;
+    private Integer status;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createdAt;

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
  * 用户dao层实现
  * 在repository与service层之间添加一层dao，增加扩展性。
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 @Repository

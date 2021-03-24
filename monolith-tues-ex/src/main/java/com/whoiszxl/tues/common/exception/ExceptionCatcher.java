@@ -7,7 +7,7 @@ import com.whoiszxl.tues.common.exception.custom.ValidateException;
 /**
  * 异常捕获
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 public class ExceptionCatcher {

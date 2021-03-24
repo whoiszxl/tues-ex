@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 登录请求参数
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 @Data

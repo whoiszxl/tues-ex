@@ -7,7 +7,7 @@ import org.apache.commons.codec.binary.StringUtils;
 /**
  * 校验参数有效性工具类
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 public class ValidateUtils {

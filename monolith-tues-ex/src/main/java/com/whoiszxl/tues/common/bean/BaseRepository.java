@@ -7,7 +7,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 /**
  * JPA repository 基类
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 @NoRepositoryBean

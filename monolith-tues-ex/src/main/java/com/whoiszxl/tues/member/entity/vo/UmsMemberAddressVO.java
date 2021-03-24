@@ -19,8 +19,6 @@ import java.time.LocalDateTime;
  * @since 2021-03-17
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
 public class UmsMemberAddressVO extends AbstractObject implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -37,17 +35,8 @@ public class UmsMemberAddressVO extends AbstractObject implements Serializable {
     @ApiModelProperty(value = "充值地址")
     private String depositAddress;
 
-    @ApiModelProperty(value = "私钥")
-    private String privateKey;
-
-    @ApiModelProperty(value = "密码")
-    private String password;
-
-    @ApiModelProperty(value = "keystore")
-    private String keystore;
-
     @ApiModelProperty(value = "钱包状态，0：关闭 1：开启")
-    private Boolean status;
+    private Integer status;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "创建时间")
@@ -56,6 +45,5 @@ public class UmsMemberAddressVO extends AbstractObject implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "更新时间")
     private LocalDateTime updatedAt;
-
 
 }

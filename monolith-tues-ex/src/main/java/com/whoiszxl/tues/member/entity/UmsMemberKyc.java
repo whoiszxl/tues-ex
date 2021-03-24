@@ -21,8 +21,6 @@ import java.time.LocalDateTime;
  * @since 2021-03-17
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
 @Table(name = "ums_member_kyc")
 @Entity
 public class UmsMemberKyc extends AbstractObject implements Serializable {

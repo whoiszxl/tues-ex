@@ -36,3 +36,12 @@ aliyun:
     accessKeySecret:
     template_code: SMS_99220057
     sign_name: zxlvoid验证码
+
+
+coin:
+  btc:
+    nodeurl: ENC(VA8Hl262vRjI7IqUuk3QhWM1h6TPC49kf3OSJz0KizFv1/RGB2XF9KPGyhI29/vzm8woTweWQ9A=) #节点地址,包含了RPC账号和密码
+  eth:
+    nodeurl: ENC(ILsRmQ+vPZHxRgNoMdX2BU/ouaPiSOGGJIHV7Aa1SixnpXKHuTzliDyebbdp8pEFfuI1rRqB7ah4C9+bLh3nSMfDMR6WYzRN) #节点地址,infura需包含PROJECT_ID
+    keystorepath: D:/code/keystore
+    keystorepassword: 123456

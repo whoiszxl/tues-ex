@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 /**
  * Bean拷贝工具类
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 public class BeanCopierUtils {

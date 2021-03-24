@@ -16,7 +16,7 @@ import java.util.Date;
 /**
  * jwt工具类
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 @Data

@@ -6,7 +6,7 @@ import lombok.Getter;
 /**
  * 正常的开关状态枚举
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 @Getter

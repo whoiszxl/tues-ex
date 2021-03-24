@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 用户Redis前缀
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 @Getter

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 /**
  * 用户登记枚举
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 @Getter

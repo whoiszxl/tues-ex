@@ -6,7 +6,7 @@ import lombok.Getter;
 /**
  * 用户角色枚举
  * TODO 扩展实现
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 @Getter

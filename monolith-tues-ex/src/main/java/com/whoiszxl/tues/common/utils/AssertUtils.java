@@ -7,7 +7,7 @@ import org.springframework.util.StringUtils;
 /**
  * 断言工具
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 public class AssertUtils {

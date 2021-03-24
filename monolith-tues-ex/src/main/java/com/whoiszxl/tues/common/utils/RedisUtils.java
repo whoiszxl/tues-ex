@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * redis工具类
  *
- * @author zhouxiaolong
+ * @author whoiszxl
  * @date 2021/3/17
  */
 @Component

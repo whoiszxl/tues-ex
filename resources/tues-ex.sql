@@ -75,7 +75,6 @@ CREATE TABLE `ums_member_wallet` (
 	`id` bigint(20) NOT NULL COMMENT '主键ID',
 	`member_id` bigint(20) NOT NULL COMMENT '用户ID',
 	`coin_id` int(10) NOT NULL COMMENT '币种ID',
-	`all_balance` decimal(40, 18) NOT NULL COMMENT '总金额数量',
 	`lock_balance` decimal(40, 18) NOT NULL COMMENT '锁定金额数量',
 	`usable_balance` decimal(40, 18) NOT NULL COMMENT '可用金额数量',
 	`status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '钱包，0：关闭 1：开启',

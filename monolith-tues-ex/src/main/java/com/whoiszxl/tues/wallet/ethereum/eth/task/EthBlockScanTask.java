@@ -7,6 +7,7 @@ import com.whoiszxl.tues.common.utils.DateProvider;
 import com.whoiszxl.tues.common.utils.IdWorker;
 import com.whoiszxl.tues.member.entity.dto.UmsMemberAddressDTO;
 import com.whoiszxl.tues.member.service.MemberAddressService;
+import com.whoiszxl.tues.member.service.MemberWalletService;
 import com.whoiszxl.tues.trade.entity.OmsDeposit;
 import com.whoiszxl.tues.trade.entity.OmsHeight;
 import com.whoiszxl.tues.trade.entity.dto.OmsCoinDTO;
@@ -27,7 +28,6 @@ import org.web3j.utils.Convert;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -57,7 +57,10 @@ public class EthBlockScanTask {
     @Autowired
     private IdWorker idWorker;
 
-    private String coinName = CoinNameConstants.ETH;
+    @Autowired
+    private MemberWalletService memberWalletService;
+
+    private final String coinName = CoinNameConstants.ETH;
 
     /**
      * 扫描链上的交易是否和数据库中的充值单是否匹配，如果匹配则修改对应状态。
@@ -82,7 +85,7 @@ public class EthBlockScanTask {
         AssertUtils.isFalse(networkBlockHeight - currentHeight <= 1, "不存在需要扫描的区块");
 
         //扫描区块中的交易
-        for(Long i = currentHeight + 1; i <= networkBlockHeight; i++) {
+        for(long i = currentHeight + 1; i <= networkBlockHeight; i++) {
             //通过区块高度获取到区块信息， 并从区块信息中拿到交易信息列表
             EthBlock.Block block = ethereumService.getBlockByNumber(i);
             List<EthBlock.TransactionResult> transactions = block.getTransactions();
@@ -172,6 +175,9 @@ public class EthBlockScanTask {
             depositDTO.setUpdatedAt(dateProvider.now());
 
             depositService.updateRecharge(depositDTO.clone(OmsDeposit.class));
+
+            //给用户账户增加余额
+            memberWalletService.addBalance(depositDTO.getMemberId(), depositDTO.getCoinId(), depositDTO.getDepositActual());
         }
     }
 

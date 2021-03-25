@@ -1,13 +1,13 @@
 package com.whoiszxl.tues.wallet.btc.task;
 
 import com.whoiszxl.tues.common.constants.CoinNameConstants;
-import com.whoiszxl.tues.common.enums.SwitchStatusEnum;
 import com.whoiszxl.tues.common.enums.UpchainStatusEnum;
 import com.whoiszxl.tues.common.utils.AssertUtils;
 import com.whoiszxl.tues.common.utils.DateProvider;
 import com.whoiszxl.tues.common.utils.IdWorker;
 import com.whoiszxl.tues.member.entity.dto.UmsMemberAddressDTO;
 import com.whoiszxl.tues.member.service.MemberAddressService;
+import com.whoiszxl.tues.member.service.MemberWalletService;
 import com.whoiszxl.tues.trade.entity.OmsDeposit;
 import com.whoiszxl.tues.trade.entity.OmsHeight;
 import com.whoiszxl.tues.trade.entity.dto.OmsCoinDTO;
@@ -24,9 +24,7 @@ import org.springframework.util.ObjectUtils;
 import wf.bitcoin.javabitcoindrpcclient.BitcoindRpcClient;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * BTC区块扫描任务
@@ -56,7 +54,10 @@ public class BtcBlockScanTask {
     @Autowired
     private MemberAddressService memberAddressService;
 
-    private String coinName = CoinNameConstants.BTC;
+    @Autowired
+    private MemberWalletService memberWalletService;
+
+    private final String coinName = CoinNameConstants.BTC;
 
     /**
      * 扫描链上的交易是否和数据库中的充值单是否匹配，如果匹配则修改对应状态。
@@ -70,19 +71,19 @@ public class BtcBlockScanTask {
         OmsCoinDTO coinInfo = coinService.findCoinByName(coinName);
 
         //获取到当前网络区块高度
-        Long networkBlockHeight = Long.parseLong(bitcoinClient.getBlockCount() + "");
+        long networkBlockHeight = Long.parseLong(bitcoinClient.getBlockCount() + "");
 
         //获取到系统扫描到的区块记录，不存在则创建并抛出异常
         OmsHeightDTO heightObj = depositService.getOrCreateCurrentHeight(coinName, coinInfo, networkBlockHeight);
         Long currentHeight = heightObj.getHeight();
 
         //相隔1个区块不进行扫描
-        AssertUtils.isFalse(networkBlockHeight.longValue() - currentHeight <= 1, "区块相隔1个以内,不需要扫描");
+        AssertUtils.isFalse(networkBlockHeight - currentHeight <= 1, "区块相隔1个以内,不需要扫描");
 
         //扫描区块中的交易
-        for(Long i = currentHeight + 1; i <= networkBlockHeight; i++) {
+        for(long i = currentHeight + 1; i <= networkBlockHeight; i++) {
             //通过区块高度拿到区块Hash，再通过区块Hash拿到区块对象，再从区块对象中拿到交易ID集合
-            String blockHash = bitcoinClient.getBlockHash(i.intValue());
+            String blockHash = bitcoinClient.getBlockHash((int) i);
             BitcoindRpcClient.Block block = bitcoinClient.getBlock(blockHash);
             List<String> txs = block.tx();
 
@@ -186,7 +187,8 @@ public class BtcBlockScanTask {
 
             depositService.updateRecharge(depositDTO.clone(OmsDeposit.class));
 
-            //TODO 发送消息给用户账户增加余额
+            //给用户账户增加余额
+            memberWalletService.addBalance(depositDTO.getMemberId(), depositDTO.getCoinId(), depositDTO.getDepositActual());
         }
     }
 

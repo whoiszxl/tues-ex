@@ -3,8 +3,6 @@ package com.whoiszxl.tues.member.entity.dto;
 import com.whoiszxl.tues.common.bean.AbstractObject;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -31,9 +29,6 @@ public class UmsMemberWalletDTO extends AbstractObject implements Serializable {
 
     @ApiModelProperty(value = "币种ID")
     private Integer coinId;
-
-    @ApiModelProperty(value = "总金额数量")
-    private BigDecimal allBalance;
 
     @ApiModelProperty(value = "锁定金额数量")
     private BigDecimal lockBalance;

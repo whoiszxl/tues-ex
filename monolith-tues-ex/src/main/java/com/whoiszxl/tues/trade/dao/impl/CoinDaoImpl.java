@@ -4,6 +4,8 @@ import com.whoiszxl.tues.trade.dao.CoinDao;
 import com.whoiszxl.tues.trade.entity.OmsCoin;
 import com.whoiszxl.tues.trade.repository.OmsCoinRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,5 +25,10 @@ public class CoinDaoImpl implements CoinDao {
     @Override
     public List<OmsCoin> findAllByStatusOrderBySortAscIdAsc(Integer status) {
         return omsCoinRepository.findAllByStatusOrderBySortAscIdAsc(status);
+    }
+
+    @Override
+    public Page<OmsCoin> findAllByStatusOrderBySortAscIdAsc(Integer status, Pageable pageable) {
+        return omsCoinRepository.findAllByStatusOrderBySortAscIdAsc(status, pageable);
     }
 }

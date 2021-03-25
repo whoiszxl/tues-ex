@@ -5,8 +5,12 @@ import com.whoiszxl.tues.common.utils.BeanCopierUtils;
 import com.whoiszxl.tues.trade.dao.CoinDao;
 import com.whoiszxl.tues.trade.entity.OmsCoin;
 import com.whoiszxl.tues.trade.entity.dto.OmsCoinDTO;
+import com.whoiszxl.tues.trade.entity.param.PageParam;
 import com.whoiszxl.tues.trade.service.CoinService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,5 +43,13 @@ public class CoinServiceImpl implements CoinService {
             return coinOptional.get();
         }
         return null;
+    }
+
+    @Override
+    public List<OmsCoinDTO> coinList(PageParam pageParam) {
+        Pageable pageable = PageRequest.of(pageParam.getPageNumber(), pageParam.getPageSize());
+        Page<OmsCoin> coinPage = coinDao.findAllByStatusOrderBySortAscIdAsc(SwitchStatusEnum.STATUS_OPEN.getStatusCode(), pageable);
+        List<OmsCoin> omsCoinList = coinPage.getContent();
+        return BeanCopierUtils.copyListProperties(omsCoinList, OmsCoinDTO::new);
     }
 }

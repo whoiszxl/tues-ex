@@ -58,21 +58,6 @@ public class OmsCoinVO extends AbstractObject implements Serializable {
     @ApiModelProperty(value = "该币种的链接地址")
     private String coinUrl;
 
-    @ApiModelProperty(value = "智能合约abi接口")
-    private String contractAbi;
-
-    @ApiModelProperty(value = "智能合约地址")
-    private String contractAddress;
-
-    @ApiModelProperty(value = "rpc路径")
-    private String rpcUrl;
-
-    @ApiModelProperty(value = "rpc用户名")
-    private String rpcUsername;
-
-    @ApiModelProperty(value = "rpc密码")
-    private String rpcPassword;
-
     @ApiModelProperty(value = "最大提币额")
     private BigDecimal maxWithdraw;
 
@@ -81,12 +66,6 @@ public class OmsCoinVO extends AbstractObject implements Serializable {
 
     @ApiModelProperty(value = "提币手续费")
     private BigDecimal feeWithdraw;
-
-    @ApiModelProperty(value = "钱包储存路径")
-    private String walletUrl;
-
-    @ApiModelProperty(value = "钱包密钥")
-    private String walletKey;
 
     @ApiModelProperty(value = "充值确认数")
     private Integer confirms;

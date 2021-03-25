@@ -58,4 +58,12 @@ public interface MemberWalletDao {
      * @param umsMemberWallet
      */
     void saveMemberWallet(UmsMemberWallet umsMemberWallet);
+
+    /**
+     * 充值增加金额 直接增加可用金额
+     * @param memberId 用户ID
+     * @param coinId 币种ID
+     * @param amount 金额
+     */
+    void depositBalance(Long memberId, Integer coinId, BigDecimal amount);
 }

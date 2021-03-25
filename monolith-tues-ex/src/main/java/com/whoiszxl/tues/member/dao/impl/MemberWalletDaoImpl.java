@@ -43,4 +43,9 @@ public class MemberWalletDaoImpl implements MemberWalletDao {
     public void saveMemberWallet(UmsMemberWallet umsMemberWallet) {
         umsMemberWalletRepository.save(umsMemberWallet);
     }
+
+    @Override
+    public void depositBalance(Long memberId, Integer coinId, BigDecimal amount) {
+        umsMemberWalletRepository.depositBalance(memberId, coinId, amount);
+    }
 }

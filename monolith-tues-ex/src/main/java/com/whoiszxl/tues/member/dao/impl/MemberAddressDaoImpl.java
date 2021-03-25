@@ -28,7 +28,7 @@ public class MemberAddressDaoImpl implements MemberAddressDao {
     }
 
     @Override
-    public UmsMemberAddress findByCoinIdAndDepositAddressAndStatus(Long coinId, String depositAddress, Integer status) {
+    public UmsMemberAddress findByCoinIdAndDepositAddressAndStatus(Integer coinId, String depositAddress, Integer status) {
         return umsMemberAddressRepository.findByCoinIdAndDepositAddressAndStatus(coinId, depositAddress, status);
     }
 

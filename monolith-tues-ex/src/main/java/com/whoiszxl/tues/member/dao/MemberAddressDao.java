@@ -27,7 +27,7 @@ public interface MemberAddressDao {
      * @param status 状态
      * @return 用户地址信息
      */
-    UmsMemberAddress findByCoinIdAndDepositAddressAndStatus(Long coinId, String depositAddress, Integer status);
+    UmsMemberAddress findByCoinIdAndDepositAddressAndStatus(Integer coinId, String depositAddress, Integer status);
 
     /**
      * 更新或新增用户地址

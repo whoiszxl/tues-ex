@@ -28,5 +28,5 @@ public interface UmsMemberAddressRepository extends BaseRepository<UmsMemberAddr
      * @param status 状态
      * @return 用户地址信息
      */
-    UmsMemberAddress findByCoinIdAndDepositAddressAndStatus(Long coinId, String depositAddress, Integer status);
+    UmsMemberAddress findByCoinIdAndDepositAddressAndStatus(Integer coinId, String depositAddress, Integer status);
 }

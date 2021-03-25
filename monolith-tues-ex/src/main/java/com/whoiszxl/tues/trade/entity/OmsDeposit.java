@@ -60,10 +60,13 @@ public class OmsDeposit extends AbstractObject implements Serializable {
     private LocalDateTime upchainSuccessAt;
 
     @ApiModelProperty(value = "上链状态，0：失败 1：成功 2：上链后等待确认中")
-    private Boolean upchainStatus;
+    private Integer upchainStatus;
+
+    @ApiModelProperty(value = "当前交易确认数")
+    private Integer currentConfirm;
 
     @ApiModelProperty(value = "当前交易所处区块的高度")
-    private Integer height;
+    private Long height;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createdAt;

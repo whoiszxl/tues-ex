@@ -1,6 +1,5 @@
 package com.whoiszxl.tues.wallet.service.impl;
 
-import com.whoiszxl.tues.common.bean.Result;
 import com.whoiszxl.tues.common.enums.SwitchStatusEnum;
 import com.whoiszxl.tues.common.utils.DateProvider;
 import com.whoiszxl.tues.common.utils.IdWorker;
@@ -9,10 +8,12 @@ import com.whoiszxl.tues.member.entity.dto.UmsMemberAddressDTO;
 import com.whoiszxl.tues.member.service.MemberAddressService;
 import com.whoiszxl.tues.trade.entity.dto.OmsCoinDTO;
 import com.whoiszxl.tues.trade.service.CoinService;
-import com.whoiszxl.tues.wallet.common.AddressCreatorFactory;
+import com.whoiszxl.tues.wallet.common.CoinNodeProviderFactory;
 import com.whoiszxl.tues.wallet.ethereum.core.entity.AddressResponse;
-import com.whoiszxl.tues.wallet.ethereum.core.service.AddressCreator;
+import com.whoiszxl.tues.wallet.ethereum.core.service.NodeProvider;
 import com.whoiszxl.tues.wallet.service.AddressDispenseService;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,7 @@ public class AddressDispenseServiceImpl implements AddressDispenseService {
     private MemberAddressService memberAddressService;
 
     @Autowired
-    private AddressCreatorFactory addressCreatorFactory;
+    private CoinNodeProviderFactory addressCreatorFactory;
 
     @Autowired
     private CoinService coinService;
@@ -60,20 +61,18 @@ public class AddressDispenseServiceImpl implements AddressDispenseService {
             coinName = omsCoinDTO.getCoinName();
         }
         //未生成调用工厂生成对应地址
-        AddressCreator addressCreator = addressCreatorFactory.get(coinName);
-        Result<AddressResponse> result = addressCreator.createRechargeAddress(memberId);
+        NodeProvider addressCreator = addressCreatorFactory.get(coinName);
+        AddressResponse rechargeAddress = addressCreator.createRechargeAddress(memberId);
 
         //将生成的地址保存到数据库
-        if(result.isOk() && result.getData() != null) {
-            AddressResponse addressResponse = result.getData();
-
+        if(ObjectUtils.isNotEmpty(rechargeAddress) && StringUtils.isNotBlank(rechargeAddress.getAddress())) {
             UmsMemberAddress umsMemberAddress = new UmsMemberAddress();
             umsMemberAddress.setId(idWorker.nextId());
             umsMemberAddress.setMemberId(memberId);
             umsMemberAddress.setCoinId(coinId);
-            umsMemberAddress.setDepositAddress(addressResponse.getAddress());
-            umsMemberAddress.setKeystore(addressResponse.getKeystoreName());
-            umsMemberAddress.setPrivateKey(addressResponse.getMnemonic());
+            umsMemberAddress.setDepositAddress(rechargeAddress.getAddress());
+            umsMemberAddress.setKeystore(rechargeAddress.getKeystoreName());
+            umsMemberAddress.setPrivateKey(rechargeAddress.getMnemonic());
             umsMemberAddress.setStatus(SwitchStatusEnum.STATUS_OPEN.getStatusCode());
             umsMemberAddress.setUpdatedAt(dateProvider.now());
             umsMemberAddress.setCreatedAt(dateProvider.now());

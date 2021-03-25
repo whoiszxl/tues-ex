@@ -6,12 +6,12 @@ package com.whoiszxl.tues.common.constants;
  * @author whoiszxl
  * @date 2021/3/23
  */
-public class CoinNameConstans {
+public class CoinNameConstants {
 
     public static final String BTC = "BTC";
 
     public static final String ETH = "ETH";
 
 
-    private CoinNameConstans() {}
+    private CoinNameConstants() {}
 }

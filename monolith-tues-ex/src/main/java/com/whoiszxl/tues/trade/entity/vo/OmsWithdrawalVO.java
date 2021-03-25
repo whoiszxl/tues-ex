@@ -63,7 +63,7 @@ public class OmsWithdrawalVO extends AbstractObject implements Serializable {
     private String auditUid;
 
     @ApiModelProperty(value = "审核状态，0：审核不通过 1：审核通过 2：审核中")
-    private Boolean auditStatus;
+    private Integer auditStatus;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "上链时间")
@@ -74,7 +74,7 @@ public class OmsWithdrawalVO extends AbstractObject implements Serializable {
     private LocalDateTime upchainSuccessAt;
 
     @ApiModelProperty(value = "上链状态，0：失败 1：成功 2：上链后等待确认中")
-    private Boolean upchainStatus;
+    private Integer upchainStatus;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "创建时间")

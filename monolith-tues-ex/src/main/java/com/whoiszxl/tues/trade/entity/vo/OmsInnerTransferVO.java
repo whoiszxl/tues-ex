@@ -29,7 +29,7 @@ public class OmsInnerTransferVO extends AbstractObject implements Serializable {
     private Long id;
 
     @ApiModelProperty(value = "币种ID")
-    private Long coinId;
+    private Integer coinId;
 
     @ApiModelProperty(value = "转账金额")
     private BigDecimal amount;

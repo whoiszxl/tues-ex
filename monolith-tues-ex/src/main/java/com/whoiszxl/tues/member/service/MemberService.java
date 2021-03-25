@@ -1,16 +1,13 @@
 package com.whoiszxl.tues.member.service;
 
-import com.aliyuncs.CommonResponse;
 import com.whoiszxl.tues.common.bean.Result;
-import com.whoiszxl.tues.member.entity.UmsMember;
 import com.whoiszxl.tues.member.entity.dto.UmsMemberDTO;
 import com.whoiszxl.tues.member.entity.param.RegisterParam;
-import com.whoiszxl.tues.member.entity.param.SmsParam;
 
 import java.util.Map;
 
 /**
- * TODO
+ * 用户服务接口
  *
  * @author whoiszxl
  * @date 2021/3/17

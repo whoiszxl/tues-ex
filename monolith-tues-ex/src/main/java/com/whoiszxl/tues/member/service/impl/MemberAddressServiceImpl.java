@@ -31,6 +31,12 @@ public class MemberAddressServiceImpl implements MemberAddressService {
     }
 
     @Override
+    public UmsMemberAddressDTO findByDepositAddressAndCoinId(String depositAddress, Integer coinId) {
+        UmsMemberAddress umsMemberAddress = memberAddressDao.findByCoinIdAndDepositAddressAndStatus(coinId, depositAddress, SwitchStatusEnum.STATUS_OPEN.getStatusCode());
+        return umsMemberAddress == null ? null : umsMemberAddress.clone(UmsMemberAddressDTO.class);
+    }
+
+    @Override
     public UmsMemberAddressDTO save(UmsMemberAddress umsMemberAddress) {
         return memberAddressDao.save(umsMemberAddress).clone(UmsMemberAddressDTO.class);
     }

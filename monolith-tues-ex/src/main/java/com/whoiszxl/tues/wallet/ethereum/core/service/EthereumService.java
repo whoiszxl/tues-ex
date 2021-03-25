@@ -1,11 +1,13 @@
 package com.whoiszxl.tues.wallet.ethereum.core.service;
 
+import com.whoiszxl.tues.common.bean.Result;
 import com.whoiszxl.tues.common.utils.AssertUtils;
 import com.whoiszxl.tues.wallet.ethereum.core.entity.EthereumAddress;
 import com.whoiszxl.tues.wallet.ethereum.core.utils.EthereumUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.bitcoin.protocols.payments.Protos;
 import org.bitcoinj.crypto.*;
 import org.bitcoinj.wallet.DeterministicSeed;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +19,7 @@ import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
-import org.web3j.crypto.Credentials;
-import org.web3j.crypto.ECKeyPair;
-import org.web3j.crypto.Keys;
-import org.web3j.crypto.WalletUtils;
+import org.web3j.crypto.*;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.DefaultBlockParameterNumber;
@@ -38,9 +37,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 /**
- * TODO
+ * 以太坊服务，支持ERC2O和ETH
  *
  * @author whoiszxl
  * @date 2021/3/23
@@ -54,6 +54,9 @@ public class EthereumService {
 
     @Value("${coin.eth.keystorepassword}")
     private String keystorePassword;
+
+    @Value("{coin.eth.gaslimit}")
+    private String gasLimit;
 
     /**
      * erc20中转账事件签名的hash值，是eventLog中的topics[0]字段。
@@ -349,5 +352,64 @@ public class EthereumService {
             log.error("校验事件日志失败", e);
         }
         return false;
+    }
+
+
+    public Result<String> transfer(String walletFile, String password, String toAddress, BigDecimal amount) {
+        //解锁钱包文件
+        Credentials credentials;
+        try {
+            credentials = WalletUtils.loadCredentials(password, walletFile);
+        } catch (IOException e) {
+            log.error("钱包文件不存在", e);
+            return Result.buildError("钱包文件不存在");
+        } catch (CipherException e) {
+            log.error("钱包密码不正确", e);
+            return Result.buildError("钱包密码不正确");
+        }
+
+        //获得交易nonce
+        BigInteger nonce = null;
+        try {
+            EthGetTransactionCount txCount = web3j.ethGetTransactionCount(
+                    credentials.getAddress(),
+                    DefaultBlockParameterName.LATEST)
+                    .sendAsync()
+                    .get();
+            nonce = txCount.getTransactionCount();
+        } catch (Exception e) {
+            log.error("获取nonce失败", e);
+        }
+
+        //获取gas价格
+        BigInteger gasPrice = getGasPrice();
+
+        //发送金额 wei单位
+        BigInteger weiValue = Convert.toWei(amount, Convert.Unit.ETHER).toBigInteger();
+
+        //创建交易raw对象
+        RawTransaction rawTransaction = RawTransaction.createEtherTransaction(
+                nonce, gasPrice, new BigInteger(gasLimit), toAddress, weiValue);
+
+        //对交易信息进行签名，并转为十六进制字符串
+        byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
+        String hexValue = Numeric.toHexString(signedMessage);
+
+        //将交易广播出去并获取到交易Hash
+        try {
+            EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).sendAsync().get();
+            String txHash = ethSendTransaction.getTransactionHash();
+            log.info("transfer 产生了一笔ETH交易  from:{} to:{} amount:{} txHash:{}",
+                    credentials.getAddress(), toAddress, amount.toPlainString(), txHash);
+
+            if (StringUtils.isEmpty(txHash) || txHash.equals("null")) {
+                return Result.buildError("交易发送失败");
+            }
+
+            return Result.buildSuccess(txHash);
+        } catch (Exception e) {
+            log.error("广播交易失败", e);
+            return Result.buildError("广播交易失败");
+        }
     }
 }

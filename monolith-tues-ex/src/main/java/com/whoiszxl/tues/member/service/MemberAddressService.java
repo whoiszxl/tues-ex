@@ -20,6 +20,14 @@ public interface MemberAddressService {
     UmsMemberAddressDTO getMemberAddressByCoinId(Long memberId, Integer coinId);
 
     /**
+     * 通过充值地址与币种ID查询地址信息
+     * @param depositAddress 充值地址
+     * @param coinId 币种ID
+     * @return
+     */
+    UmsMemberAddressDTO findByDepositAddressAndCoinId(String depositAddress, Integer coinId);
+
+    /**
      * 更新或新增用户地址
      * @param umsMemberAddress 用户地址实体
      */

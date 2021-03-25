@@ -291,7 +291,8 @@ CREATE TABLE `oms_deposit` (
 	`to_address` varchar(255) DEFAULT NULL COMMENT '交易所分配给用户的唯一地址',
 	`upchain_at` datetime COMMENT '上链时间',
 	`upchain_success_at` datetime COMMENT '上链成功时间',
-	`upchain_status` tinyint(1) NOT NULL DEFAULT '2' COMMENT '上链状态，0：失败 1：成功 2：上链后等待确认中',
+	`upchain_status` tinyint(1) NOT NULL DEFAULT '2' COMMENT '上链状态，1：上链并确认成功 2：等待确认中 3：未上链',
+	`current_confirm` int(10) DEFAULT NULL COMMENT '当前交易确认数',
 	`height` int(20) DEFAULT NULL COMMENT '当前交易所处区块的高度',
 	`created_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
 	`updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -320,6 +321,16 @@ CREATE TABLE `oms_withdrawal` (
 	`updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 	PRIMARY KEY (`id`)
 ) ENGINE = InnoDB CHARSET = utf8mb4 COMMENT '用户提现记录表';
+
+DROP TABLE IF EXISTS `pay_height`;
+CREATE TABLE `pay_height` (
+  `coin_id` int(10) NOT NULL COMMENT '币种ID',
+  `coin_name` varchar(32) NOT NULL COMMENT '货币名称',
+  `height` bigint(20) NOT NULL COMMENT '当前服务扫描区块高度',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`coin_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='区块高度同步记录';
 
 DROP TABLE IF EXISTS `oms_inner_transfer`;
 CREATE TABLE `oms_inner_transfer` (

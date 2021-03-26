@@ -55,13 +55,6 @@ public class OmsWithdrawalVO extends AbstractObject implements Serializable {
     @ApiModelProperty(value = "用户提币后收币地址")
     private String toAddress;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-    @ApiModelProperty(value = "审核时间")
-    private LocalDateTime auditAt;
-
-    @ApiModelProperty(value = "审核操作人(管理员）")
-    private String auditUid;
-
     @ApiModelProperty(value = "审核状态，0：审核不通过 1：审核通过 2：审核中")
     private Integer auditStatus;
 

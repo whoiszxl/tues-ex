@@ -4,6 +4,8 @@ import com.whoiszxl.tues.trade.dao.DepositDao;
 import com.whoiszxl.tues.trade.entity.OmsDeposit;
 import com.whoiszxl.tues.trade.repository.OmsDepositRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -39,5 +41,10 @@ public class DepositDaoImpl implements DepositDao {
     @Override
     public Boolean existsByTxHashAndCoinName(String txHash, String coinName) {
         return omsDepositRepository.existsByTxHashAndCoinName(txHash, coinName);
+    }
+
+    @Override
+    public Page<OmsDeposit> findAllByMemberIdOrderById(Long memberId, Pageable pageable) {
+        return omsDepositRepository.findAllByMemberIdOrderById(memberId, pageable);
     }
 }

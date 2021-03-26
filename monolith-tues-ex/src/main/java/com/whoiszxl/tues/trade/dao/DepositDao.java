@@ -1,6 +1,8 @@
 package com.whoiszxl.tues.trade.dao;
 
 import com.whoiszxl.tues.trade.entity.OmsDeposit;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -44,4 +46,12 @@ public interface DepositDao {
      * @return
      */
     Boolean existsByTxHashAndCoinName(String txHash, String coinName);
+
+    /**
+     * 通过用户ID分页查询充值记录
+     * @param memberId 用户ID
+     * @param pageable 分页参数
+     * @return
+     */
+    Page<OmsDeposit> findAllByMemberIdOrderById(Long memberId, Pageable pageable);
 }

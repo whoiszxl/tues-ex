@@ -5,6 +5,8 @@ import com.whoiszxl.tues.trade.entity.OmsHeight;
 import com.whoiszxl.tues.trade.entity.dto.OmsCoinDTO;
 import com.whoiszxl.tues.trade.entity.dto.OmsDepositDTO;
 import com.whoiszxl.tues.trade.entity.dto.OmsHeightDTO;
+import com.whoiszxl.tues.trade.entity.param.PageParam;
+import com.whoiszxl.tues.trade.entity.vo.OmsDepositVO;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -73,4 +75,12 @@ public interface DepositService {
      * @return
      */
     boolean checkTxIsExist(String txHash, String coinName);
+
+    /**
+     * 获取此用户的充值记录
+     * @param memberId 用户ID
+     * @param pageParam 分页参数
+     * @return
+     */
+    List<OmsDepositDTO> depositList(Long memberId, PageParam pageParam);
 }

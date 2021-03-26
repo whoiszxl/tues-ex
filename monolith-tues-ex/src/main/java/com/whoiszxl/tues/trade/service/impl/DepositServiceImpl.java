@@ -12,9 +12,13 @@ import com.whoiszxl.tues.trade.entity.OmsHeight;
 import com.whoiszxl.tues.trade.entity.dto.OmsCoinDTO;
 import com.whoiszxl.tues.trade.entity.dto.OmsDepositDTO;
 import com.whoiszxl.tues.trade.entity.dto.OmsHeightDTO;
+import com.whoiszxl.tues.trade.entity.param.PageParam;
 import com.whoiszxl.tues.trade.service.DepositService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -93,5 +97,13 @@ public class DepositServiceImpl implements DepositService {
     @Override
     public boolean checkTxIsExist(String txHash, String coinName) {
         return depositDao.existsByTxHashAndCoinName(txHash, coinName);
+    }
+
+    @Override
+    public List<OmsDepositDTO> depositList(Long memberId, PageParam pageParam) {
+        Pageable pageable = PageRequest.of(pageParam.getPageNumber(), pageParam.getPageSize());
+        Page<OmsDeposit> pageList = depositDao.findAllByMemberIdOrderById(memberId, pageable);
+        List<OmsDeposit> depositList = pageList.getContent();
+        return BeanCopierUtils.copyListProperties(depositList, OmsDepositDTO::new);
     }
 }

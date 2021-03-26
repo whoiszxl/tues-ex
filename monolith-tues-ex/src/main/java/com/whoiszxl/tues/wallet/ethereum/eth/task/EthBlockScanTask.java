@@ -177,7 +177,7 @@ public class EthBlockScanTask {
             depositService.updateRecharge(depositDTO.clone(OmsDeposit.class));
 
             //给用户账户增加余额
-            memberWalletService.addBalance(depositDTO.getMemberId(), depositDTO.getCoinId(), depositDTO.getDepositActual());
+            memberWalletService.addBalance(depositDTO.getMemberId(), depositDTO.getCoinId(), depositDTO.getCoinName(), depositDTO.getDepositActual());
         }
     }
 

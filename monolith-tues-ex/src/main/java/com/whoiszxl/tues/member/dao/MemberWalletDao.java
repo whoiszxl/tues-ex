@@ -3,6 +3,7 @@ package com.whoiszxl.tues.member.dao;
 import com.whoiszxl.tues.member.entity.UmsMemberWallet;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 用户钱包dao服务
@@ -66,4 +67,12 @@ public interface MemberWalletDao {
      * @param amount 金额
      */
     void depositBalance(Long memberId, Integer coinId, BigDecimal amount);
+
+    /**
+     * 通过用户ID和状态查询用户的资产列表
+     * @param memberId 用户ID
+     * @param status 状态值
+     * @return
+     */
+    List<UmsMemberWallet> findAllByMemberIdAndStatus(Long memberId, Integer status);
 }

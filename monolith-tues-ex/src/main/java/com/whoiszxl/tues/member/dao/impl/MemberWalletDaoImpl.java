@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Repository
 public class MemberWalletDaoImpl implements MemberWalletDao {
@@ -47,5 +48,10 @@ public class MemberWalletDaoImpl implements MemberWalletDao {
     @Override
     public void depositBalance(Long memberId, Integer coinId, BigDecimal amount) {
         umsMemberWalletRepository.depositBalance(memberId, coinId, amount);
+    }
+
+    @Override
+    public List<UmsMemberWallet> findAllByMemberIdAndStatus(Long memberId, Integer status) {
+        return umsMemberWalletRepository.findAllByMemberIdAndStatus(memberId, status);
     }
 }

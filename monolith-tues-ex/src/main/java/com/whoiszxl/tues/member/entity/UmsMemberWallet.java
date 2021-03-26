@@ -38,6 +38,9 @@ public class UmsMemberWallet extends AbstractObject implements Serializable {
     @ApiModelProperty(value = "币种ID")
     private Integer coinId;
 
+    @ApiModelProperty(value = "币种名称")
+    private String coinName;
+
     @ApiModelProperty(value = "锁定金额数量")
     private BigDecimal lockBalance;
 

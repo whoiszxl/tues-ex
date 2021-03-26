@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 用户钱包repository服务
@@ -61,4 +62,12 @@ public interface UmsMemberWalletRepository extends BaseRepository<UmsMemberWalle
      * @return
      */
     UmsMemberWallet findByMemberIdAndCoinId(Long memberId, Integer coinId);
+
+    /**
+     * 通过用户ID和状态查询用户的资产列表
+     * @param memberId 用户ID
+     * @param status 状态值
+     * @return
+     */
+    List<UmsMemberWallet> findAllByMemberIdAndStatus(Long memberId, Integer status);
 }

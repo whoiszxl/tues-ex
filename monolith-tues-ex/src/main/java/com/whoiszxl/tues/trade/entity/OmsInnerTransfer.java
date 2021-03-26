@@ -35,6 +35,9 @@ public class OmsInnerTransfer extends AbstractObject implements Serializable {
     @ApiModelProperty(value = "币种ID")
     private Integer coinId;
 
+    @ApiModelProperty(value = "币种名称")
+    private String coinName;
+
     @ApiModelProperty(value = "转账金额")
     private BigDecimal amount;
 

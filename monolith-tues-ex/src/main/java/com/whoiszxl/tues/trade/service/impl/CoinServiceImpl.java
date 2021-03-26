@@ -5,7 +5,7 @@ import com.whoiszxl.tues.common.utils.BeanCopierUtils;
 import com.whoiszxl.tues.trade.dao.CoinDao;
 import com.whoiszxl.tues.trade.entity.OmsCoin;
 import com.whoiszxl.tues.trade.entity.dto.OmsCoinDTO;
-import com.whoiszxl.tues.trade.entity.param.PageParam;
+import com.whoiszxl.tues.common.bean.PageParam;
 import com.whoiszxl.tues.trade.service.CoinService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

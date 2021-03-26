@@ -4,7 +4,7 @@ import com.whoiszxl.tues.common.utils.BeanCopierUtils;
 import com.whoiszxl.tues.trade.dao.WithdrawalDao;
 import com.whoiszxl.tues.trade.entity.OmsWithdrawal;
 import com.whoiszxl.tues.trade.entity.dto.OmsWithdrawalDTO;
-import com.whoiszxl.tues.trade.entity.param.PageParam;
+import com.whoiszxl.tues.common.bean.PageParam;
 import com.whoiszxl.tues.trade.service.WithdrawalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

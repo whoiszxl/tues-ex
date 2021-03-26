@@ -1,7 +1,7 @@
 package com.whoiszxl.tues.trade.service;
 
 import com.whoiszxl.tues.trade.entity.dto.OmsWithdrawalDTO;
-import com.whoiszxl.tues.trade.entity.param.PageParam;
+import com.whoiszxl.tues.common.bean.PageParam;
 
 import java.util.List;
 

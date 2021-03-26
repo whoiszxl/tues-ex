@@ -12,7 +12,7 @@ import com.whoiszxl.tues.trade.entity.OmsHeight;
 import com.whoiszxl.tues.trade.entity.dto.OmsCoinDTO;
 import com.whoiszxl.tues.trade.entity.dto.OmsDepositDTO;
 import com.whoiszxl.tues.trade.entity.dto.OmsHeightDTO;
-import com.whoiszxl.tues.trade.entity.param.PageParam;
+import com.whoiszxl.tues.common.bean.PageParam;
 import com.whoiszxl.tues.trade.service.DepositService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 /**

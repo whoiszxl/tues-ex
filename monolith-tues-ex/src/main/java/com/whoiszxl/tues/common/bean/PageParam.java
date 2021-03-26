@@ -1,5 +1,6 @@
-package com.whoiszxl.tues.trade.entity.param;
+package com.whoiszxl.tues.common.bean;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -11,8 +12,10 @@ import lombok.Data;
 @Data
 public class PageParam {
 
+    @ApiModelProperty("页码")
     private Integer pageNumber = 0;
 
+    @ApiModelProperty("每页数量")
     private Integer pageSize = 10;
 
 }

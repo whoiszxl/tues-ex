@@ -9,7 +9,7 @@ import com.whoiszxl.tues.member.service.MemberWalletService;
 import com.whoiszxl.tues.trade.entity.dto.OmsCoinDTO;
 import com.whoiszxl.tues.trade.entity.dto.OmsDepositDTO;
 import com.whoiszxl.tues.trade.entity.dto.OmsWithdrawalDTO;
-import com.whoiszxl.tues.trade.entity.param.PageParam;
+import com.whoiszxl.tues.common.bean.PageParam;
 import com.whoiszxl.tues.trade.entity.vo.OmsCoinVO;
 import com.whoiszxl.tues.trade.entity.vo.OmsDepositVO;
 import com.whoiszxl.tues.trade.entity.vo.OmsWithdrawalVO;
@@ -19,7 +19,6 @@ import com.whoiszxl.tues.trade.service.WithdrawalService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;

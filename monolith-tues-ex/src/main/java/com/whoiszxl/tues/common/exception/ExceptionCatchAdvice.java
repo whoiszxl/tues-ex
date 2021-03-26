@@ -81,7 +81,7 @@ public class ExceptionCatchAdvice {
     @ResponseBody
     public Result catchValidateException(ValidateException ex){
         //记录日志
-        log.error("全局异常捕捉:{}",ex.getMessage());
+        log.error("ExceptionCatcher {}", ex.getResult().getMessage());
         if(EXCEPTIONS == null){
             EXCEPTIONS = builder.build();//EXCEPTIONS构建成功
         }

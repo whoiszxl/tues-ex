@@ -53,7 +53,7 @@ public class OmsTransaction extends AbstractObject implements Serializable {
     @ApiModelProperty(value = "1：买入 -1：卖出")
     private Integer type;
 
-    @ApiModelProperty(value = "0代表部分交易，可交易，1是所有已成交，交易结束， -1用户撤单")
+    @ApiModelProperty(value = "2代表部分交易，可交易，1是所有已成交，交易结束， -1用户撤单")
     private Integer status;
 
     @ApiModelProperty(value = "创建时间,挂单时间")

@@ -18,7 +18,7 @@ public interface NodeProvider {
      * 创建一个货币的地址
      * @return 地址信息
      */
-    AddressResponse createRechargeAddress(Long memberId);
+    AddressResponse createDepositAddress(Long memberId);
 
     /**
      * 获取节点总余额

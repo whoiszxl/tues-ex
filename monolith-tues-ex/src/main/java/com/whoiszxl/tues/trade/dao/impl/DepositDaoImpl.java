@@ -35,4 +35,9 @@ public class DepositDaoImpl implements DepositDao {
     public OmsDeposit save(OmsDeposit omsDeposit) {
         return omsDepositRepository.save(omsDeposit);
     }
+
+    @Override
+    public Boolean existsByTxHashAndCoinName(String txHash, String coinName) {
+        return omsDepositRepository.existsByTxHashAndCoinName(txHash, coinName);
+    }
 }

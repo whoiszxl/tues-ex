@@ -24,7 +24,7 @@ public class EthNodeProvider implements NodeProvider {
     private EthereumService ethereumService;
 
     @Override
-    public AddressResponse createRechargeAddress(Long memberId) {
+    public AddressResponse createDepositAddress(Long memberId) {
         //创建地址
         EthereumAddress ethereumAddress = ethereumService.createAddressByFile();
         return new AddressResponse(

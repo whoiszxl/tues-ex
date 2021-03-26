@@ -62,17 +62,17 @@ public class AddressDispenseServiceImpl implements AddressDispenseService {
         }
         //未生成调用工厂生成对应地址
         NodeProvider addressCreator = addressCreatorFactory.get(coinName);
-        AddressResponse rechargeAddress = addressCreator.createRechargeAddress(memberId);
+        AddressResponse depositAddress = addressCreator.createDepositAddress(memberId);
 
         //将生成的地址保存到数据库
-        if(ObjectUtils.isNotEmpty(rechargeAddress) && StringUtils.isNotBlank(rechargeAddress.getAddress())) {
+        if(ObjectUtils.isNotEmpty(depositAddress) && StringUtils.isNotBlank(depositAddress.getAddress())) {
             UmsMemberAddress umsMemberAddress = new UmsMemberAddress();
             umsMemberAddress.setId(idWorker.nextId());
             umsMemberAddress.setMemberId(memberId);
             umsMemberAddress.setCoinId(coinId);
-            umsMemberAddress.setDepositAddress(rechargeAddress.getAddress());
-            umsMemberAddress.setKeystore(rechargeAddress.getKeystoreName());
-            umsMemberAddress.setPrivateKey(rechargeAddress.getMnemonic());
+            umsMemberAddress.setDepositAddress(depositAddress.getAddress());
+            umsMemberAddress.setKeystore(depositAddress.getKeystoreName());
+            umsMemberAddress.setPrivateKey(depositAddress.getMnemonic());
             umsMemberAddress.setStatus(SwitchStatusEnum.STATUS_OPEN.getStatusCode());
             umsMemberAddress.setUpdatedAt(dateProvider.now());
             umsMemberAddress.setCreatedAt(dateProvider.now());

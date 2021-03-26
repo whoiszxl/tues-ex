@@ -57,7 +57,7 @@ public class BtcBlockScanTask {
     @Autowired
     private MemberWalletService memberWalletService;
 
-    private final String coinName = CoinNameConstants.BTC;
+    private static final String COIN_NAME = CoinNameConstants.BTC;
 
     /**
      * 扫描链上的交易是否和数据库中的充值单是否匹配，如果匹配则修改对应状态。
@@ -68,17 +68,20 @@ public class BtcBlockScanTask {
     @Scheduled(fixedDelay = 4 * 1000)
     public void scanBlock() {
         //获取当前货币的配置信息
-        OmsCoinDTO coinInfo = coinService.findCoinByName(coinName);
+        OmsCoinDTO coinInfo = coinService.findCoinByName(COIN_NAME);
 
         //获取到当前网络区块高度
         long networkBlockHeight = Long.parseLong(bitcoinClient.getBlockCount() + "");
 
         //获取到系统扫描到的区块记录，不存在则创建并抛出异常
-        OmsHeightDTO heightObj = depositService.getOrCreateCurrentHeight(coinName, coinInfo, networkBlockHeight);
+        OmsHeightDTO heightObj = depositService.getOrCreateCurrentHeight(COIN_NAME, coinInfo, networkBlockHeight);
         Long currentHeight = heightObj.getHeight();
 
         //相隔1个区块不进行扫描
-        AssertUtils.isFalse(networkBlockHeight - currentHeight <= 1, "区块相隔1个以内,不需要扫描");
+        if(networkBlockHeight - currentHeight <= 1) {
+            log.info("【{}】区块相隔1个以内,不需要扫描", COIN_NAME);
+            return;
+        }
 
         //扫描区块中的交易
         for(long i = currentHeight + 1; i <= networkBlockHeight; i++) {
@@ -115,13 +118,20 @@ public class BtcBlockScanTask {
                     //从用户地址库中查询是否存在地址
                     UmsMemberAddressDTO umsMemberAddressDTO = memberAddressService.findByDepositAddressAndCoinId(address, coinInfo.getId());
                     if(ObjectUtils.isEmpty(umsMemberAddressDTO)) {
-                        log.info("地址不在库中：{}", address);
+                        log.info("【{}】地址不在库中：{}", COIN_NAME, address);
+                        continue;
+                    }
+
+                    log.info("【{}】有新的充值记录被扫描到，hash是：{}, 金额是：{}", COIN_NAME, txId, amount);
+
+                    //校验此充值是否在数据库中已存在
+                    if(depositService.checkTxIsExist(txId, COIN_NAME)) {
+                        log.info("【{}】重复充值，{}已在数据库中存在", COIN_NAME, txId);
                         continue;
                     }
 
                     OmsDeposit deposit = new OmsDeposit();
-
-                    //更新recharge表
+                    //更新deposit表
                     deposit.setId(idWorker.nextId());
                     deposit.setCoinId(coinInfo.getId());
                     deposit.setCoinName(coinInfo.getCoinName());
@@ -143,7 +153,7 @@ public class BtcBlockScanTask {
                     }else {
                         deposit.setUpchainStatus(UpchainStatusEnum.WAITING_CONFIRM.getCode());
                     }
-                    depositService.saveRecharge(deposit);
+                    depositService.saveDeposit(deposit);
                 }
 
             }
@@ -167,11 +177,14 @@ public class BtcBlockScanTask {
     @Scheduled(fixedDelay = 5000)
     public void confirmTx() {
         //0. 获取当前货币的配置信息
-        OmsCoinDTO coinInfo = coinService.findCoinByName(coinName);
+        OmsCoinDTO coinInfo = coinService.findCoinByName(COIN_NAME);
 
         //1. 查询到所有待确认的充值单
         List<OmsDepositDTO> waitConfirmDeposit = depositService.getWaitConfirmDeposit(coinInfo.getCoinName());
-        AssertUtils.isNotNull(waitConfirmDeposit, "不存在待确认的充值单");
+        if(ObjectUtils.isEmpty(waitConfirmDeposit)) {
+            log.info("【{}】不存在待确认的充值单", COIN_NAME);
+            return;
+        }
 
         //2. 遍历库中交易进行判断是否成功
         for (OmsDepositDTO depositDTO : waitConfirmDeposit) {
@@ -185,7 +198,7 @@ public class BtcBlockScanTask {
             depositDTO.setCurrentConfirm(transaction.confirmations());
             depositDTO.setUpdatedAt(dateProvider.now());
 
-            depositService.updateRecharge(depositDTO.clone(OmsDeposit.class));
+            depositService.updateDeposit(depositDTO.clone(OmsDeposit.class));
 
             //给用户账户增加余额
             memberWalletService.addBalance(depositDTO.getMemberId(), depositDTO.getCoinId(), depositDTO.getCoinName(), depositDTO.getDepositActual());

@@ -36,4 +36,12 @@ public interface DepositDao {
      * @return
      */
     OmsDeposit save(OmsDeposit omsDeposit);
+
+    /**
+     * 通过交易Hash和货币名称判断交易是否存在数据库中
+     * @param txHash 交易Hash
+     * @param coinName 币种名称
+     * @return
+     */
+    Boolean existsByTxHashAndCoinName(String txHash, String coinName);
 }

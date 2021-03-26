@@ -15,7 +15,8 @@ import java.util.concurrent.TimeUnit;
 @AllArgsConstructor
 public enum MemberRedisPrefixEnum {
 
-    USER_REGISTER_PHONE_CODE("member:register:", 5, TimeUnit.MINUTES)
+    USER_REGISTER_PHONE_CODE("member:register:", 5, TimeUnit.MINUTES),
+    LIMIT_SEND("limit:send:", 1, TimeUnit.MINUTES)
     ;
     private String key;
     private long time;

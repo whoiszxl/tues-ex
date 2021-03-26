@@ -60,7 +60,7 @@ public class EthBlockScanTask {
     @Autowired
     private MemberWalletService memberWalletService;
 
-    private final String coinName = CoinNameConstants.ETH;
+    private static final String COIN_NAME = CoinNameConstants.ETH;
 
     /**
      * 扫描链上的交易是否和数据库中的充值单是否匹配，如果匹配则修改对应状态。
@@ -71,18 +71,21 @@ public class EthBlockScanTask {
     @Scheduled(fixedDelay = 10 * 1000)
     public void scanOrder() {
         //获取当前货币的配置信息
-        OmsCoinDTO coinInfo = coinService.findCoinByName(coinName);
+        OmsCoinDTO coinInfo = coinService.findCoinByName(COIN_NAME);
 
         //获取到当前网络区块高度
         Long networkBlockHeight = ethereumService.getBlockchainHeight();
 
         //获取到系统扫描到的区块记录，不存在则创建并抛出异常
-        OmsHeightDTO heightObj = depositService.getOrCreateCurrentHeight(coinName, coinInfo, networkBlockHeight);
+        OmsHeightDTO heightObj = depositService.getOrCreateCurrentHeight(COIN_NAME, coinInfo, networkBlockHeight);
 
         Long currentHeight = heightObj.getHeight();
 
         //相隔1个区块不进行扫描
-        AssertUtils.isFalse(networkBlockHeight - currentHeight <= 1, "不存在需要扫描的区块");
+        if(networkBlockHeight - currentHeight <= 1) {
+            log.info("{}区块相隔1个以内,不需要扫描", COIN_NAME);
+            return;
+        }
 
         //扫描区块中的交易
         for(long i = currentHeight + 1; i <= networkBlockHeight; i++) {
@@ -94,9 +97,10 @@ public class EthBlockScanTask {
             for (EthBlock.TransactionResult transactionResult : transactions) {
                 EthBlock.TransactionObject transactionObject = (EthBlock.TransactionObject) transactionResult;
                 Transaction transaction = transactionObject.get();
+                String txId = transaction.getHash();
 
                 if(StringUtils.isEmpty(transaction.getTo())) {
-                    log.info("交易{}不存在toAddress", transaction.getHash());
+                    log.info("【{}】交易{}不存在toAddress", COIN_NAME, txId);
                     continue;
                 }
 
@@ -105,9 +109,19 @@ public class EthBlockScanTask {
                 //从用户地址库中查询是否存在地址
                 UmsMemberAddressDTO umsMemberAddressDTO = memberAddressService.findByDepositAddressAndCoinId(transaction.getTo(), coinInfo.getId());
                 if(ObjectUtils.isEmpty(umsMemberAddressDTO)) {
-                    log.info("地址不在库中：{}", transaction.getTo());
+                    log.info("【{}】地址不在库中：{}", COIN_NAME, transaction.getTo());
                     continue;
                 }
+
+                log.info("【{}】有新的充值记录被扫描到，hash是：{}, 金额是：{}", COIN_NAME, txId, amount);
+
+                //校验此充值是否在数据库中已存在
+                if(depositService.checkTxIsExist(txId, COIN_NAME)) {
+                    log.info("【{}】重复充值，{}已在数据库中存在", COIN_NAME, txId);
+                    continue;
+                }
+
+
                 OmsDeposit deposit = new OmsDeposit();
                 deposit.setId(idWorker.nextId());
                 deposit.setCoinId(coinInfo.getId());
@@ -116,7 +130,7 @@ public class EthBlockScanTask {
                 deposit.setMemberId(umsMemberAddressDTO.getMemberId());
                 deposit.setFromAddress(transaction.getFrom());
                 deposit.setToAddress(transaction.getTo());
-                deposit.setTxHash(transaction.getHash());
+                deposit.setTxHash(txId);
                 deposit.setCurrentConfirm(transaction.getBlockNumber().subtract(BigInteger.valueOf(i)).intValue());
                 deposit.setHeight(transaction.getBlockNumber().longValue());
                 deposit.setUpchainAt(dateProvider.longToLocalDateTime(block.getTimestamp().longValue()));
@@ -129,7 +143,7 @@ public class EthBlockScanTask {
                 }else {
                     deposit.setUpchainStatus(UpchainStatusEnum.WAITING_CONFIRM.getCode());
                 }
-                depositService.saveRecharge(deposit);
+                depositService.saveDeposit(deposit);
             }
 
         }
@@ -152,15 +166,18 @@ public class EthBlockScanTask {
     public void confirmTx() {
         //0. 获取当前货币的配置信息
         //获取当前货币的配置信息
-        OmsCoinDTO coinInfo = coinService.findCoinByName(coinName);
-        AssertUtils.isNotNull(coinInfo, "数据库未配置货币信息：" + coinName);
+        OmsCoinDTO coinInfo = coinService.findCoinByName(COIN_NAME);
+        AssertUtils.isNotNull(coinInfo, "数据库未配置货币信息：" + COIN_NAME);
 
         //1. 获取当前网络的区块高度
         Long currentHeight = ethereumService.getBlockchainHeight();
 
         //2. 查询到所有待确认的充值单
-        List<OmsDepositDTO> waitConfirmDeposit = depositService.getWaitConfirmDeposit(coinName);
-        AssertUtils.isNotNull(waitConfirmDeposit, "不存在待确认的充值单");
+        List<OmsDepositDTO> waitConfirmDeposit = depositService.getWaitConfirmDeposit(COIN_NAME);
+        if(ObjectUtils.isEmpty(waitConfirmDeposit)) {
+            log.info("【{}】不存在待确认的充值单", COIN_NAME);
+            return;
+        }
 
         //3. 遍历库中交易进行判断是否成功
         for (OmsDepositDTO depositDTO : waitConfirmDeposit) {
@@ -174,7 +191,7 @@ public class EthBlockScanTask {
             depositDTO.setCurrentConfirm((int) (currentHeight - transaction.getBlockNumber().longValue()));
             depositDTO.setUpdatedAt(dateProvider.now());
 
-            depositService.updateRecharge(depositDTO.clone(OmsDeposit.class));
+            depositService.updateDeposit(depositDTO.clone(OmsDeposit.class));
 
             //给用户账户增加余额
             memberWalletService.addBalance(depositDTO.getMemberId(), depositDTO.getCoinId(), depositDTO.getCoinName(), depositDTO.getDepositActual());

@@ -42,15 +42,15 @@ public interface DepositService {
 
     /**
      * 更新充值记录
-     * @param recharge 记录
+     * @param deposit 记录
      */
-    OmsDepositDTO updateRecharge(OmsDeposit omsDeposit);
+    OmsDepositDTO updateDeposit(OmsDeposit omsDeposit);
 
     /**
      * 更新或者新增充值记录
-     * @param recharge 充值记录
+     * @param deposit 充值记录
      */
-    OmsDepositDTO saveRecharge(OmsDeposit omsDeposit);
+    OmsDepositDTO saveDeposit(OmsDeposit omsDeposit);
 
 
     /**
@@ -66,4 +66,11 @@ public interface DepositService {
      */
     List<OmsDepositDTO> getWaitConfirmDeposit(String coinName);
 
+    /**
+     * 通过交易Hash和币种名称查询交易是否在库中存在
+     * @param txHash 交易Hash
+     * @param coinName 币种名称
+     * @return
+     */
+    boolean checkTxIsExist(String txHash, String coinName);
 }

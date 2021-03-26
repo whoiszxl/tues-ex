@@ -22,7 +22,7 @@ public class BtcNodeProvider implements NodeProvider {
     private BitcoindRpcClient bitcoinClient;
 
     @Override
-    public AddressResponse createRechargeAddress(Long memberId) {
+    public AddressResponse createDepositAddress(Long memberId) {
         //通过memberId为账号创建一个bitcoin地址
         String newAddress = bitcoinClient.getNewAddress(memberId.toString());
         return new AddressResponse(newAddress, null, null);

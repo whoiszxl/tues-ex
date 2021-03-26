@@ -68,14 +68,12 @@ public class DepositServiceImpl implements DepositService {
         return omsDeposit == null ? null : omsDeposit.clone(OmsDepositDTO.class);
     }
 
-    @Override
-    public OmsDepositDTO updateRecharge(OmsDeposit omsDeposit) {
+    public OmsDepositDTO updateDeposit(OmsDeposit omsDeposit) {
         OmsDeposit result = depositDao.save(omsDeposit);
         return result == null ? null : result.clone(OmsDepositDTO.class);
     }
 
-    @Override
-    public OmsDepositDTO saveRecharge(OmsDeposit omsDeposit) {
+    public OmsDepositDTO saveDeposit(OmsDeposit omsDeposit) {
         OmsDeposit result = depositDao.save(omsDeposit);
         return result == null ? null : result.clone(OmsDepositDTO.class);
     }
@@ -90,5 +88,10 @@ public class DepositServiceImpl implements DepositService {
     public List<OmsDepositDTO> getWaitConfirmDeposit(String coinName) {
         List<OmsDeposit> depositList = depositDao.findByCoinNameAndUpchainStatus(coinName, UpchainStatusEnum.WAITING_CONFIRM.getCode());
         return ObjectUtils.isEmpty(depositList) ? null : BeanCopierUtils.copyListProperties(depositList, OmsDepositDTO::new);
+    }
+
+    @Override
+    public boolean checkTxIsExist(String txHash, String coinName) {
+        return depositDao.existsByTxHashAndCoinName(txHash, coinName);
     }
 }

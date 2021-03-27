@@ -31,7 +31,6 @@ tues-ex
 | Spring Cloud         | 微服务框架          | [https://spring.io/projects/spring-cloud](https://spring.io/projects/spring-cloud) |
 | Spring Data JPA      | ORM框架             | [https://spring.io/projects/spring-data-jpa](https://spring.io/projects/spring-data-jpa) |
 | Swagger-UI           | 文档生产工具        | [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui) |
-| RabbitMq             | 消息队列            | [https://www.rabbitmq.com/](https://www.rabbitmq.com/)       |
 | Redis                | 分布式缓存          | [https://redis.io/](https://redis.io/)                       |
 | Docker               | 应用容器引擎        | [https://www.docker.com/](https://www.docker.com/)           |
 | OSS                  | 对象存储            | [https://github.com/aliyun/aliyun-oss-java-sdk](https://github.com/aliyun/aliyun-oss-java-sdk) |

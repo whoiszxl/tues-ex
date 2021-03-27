@@ -1,9 +1,16 @@
 package com.whoiszxl.tues.trade.controller;
 
 import com.whoiszxl.tues.common.bean.Result;
+import com.whoiszxl.tues.common.utils.BeanCopierUtils;
 import com.whoiszxl.tues.common.utils.JwtUtils;
 import com.whoiszxl.tues.member.entity.vo.UmsMemberWalletVO;
+import com.whoiszxl.tues.trade.entity.OmsTransaction;
+import com.whoiszxl.tues.trade.entity.dto.OmsOrderDTO;
+import com.whoiszxl.tues.trade.entity.dto.OmsTransactionDTO;
+import com.whoiszxl.tues.trade.entity.param.OrderListParam;
 import com.whoiszxl.tues.trade.entity.param.TransactionParam;
+import com.whoiszxl.tues.trade.entity.vo.OmsOrderVO;
+import com.whoiszxl.tues.trade.entity.vo.OmsTransactionVO;
 import com.whoiszxl.tues.trade.service.TransactionService;
 import io.jsonwebtoken.Claims;
 import io.swagger.annotations.Api;
@@ -12,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 交易管理接口
@@ -37,13 +46,31 @@ public class TransactionController {
         Claims memberClaims = JwtUtils.getUserClaims(request);
         Long memberId = Long.parseLong(memberClaims.getId());
         transactionParam.setMemberId(memberId);
-
-        boolean flag = transactionsService.add(transactionParam);
-        if(flag) {
-            return Result.buildSuccess();
-        }
-        return Result.buildError();
-
+        return transactionsService.add(transactionParam) ? Result.buildSuccess() : Result.buildError();
     }
+
+    @PostMapping("/list")
+    @ApiOperation(value = "查看当前挂单列表", notes = "查看当前挂单列表", response = OmsTransactionVO.class)
+    public Result<List<OmsTransactionVO>> listTransaction() {
+        Claims memberClaims = JwtUtils.getUserClaims(request);
+        Long memberId = Long.parseLong(memberClaims.getId());
+
+        List<OmsTransactionDTO> transactionDTOList = transactionsService.listTransaction(memberId);
+        List<OmsTransactionVO> transactionVOList = BeanCopierUtils.copyListProperties(transactionDTOList, OmsTransactionVO::new);
+        return Result.buildSuccess(transactionVOList);
+    }
+
+    @PostMapping("/order/list")
+    @ApiOperation(value = "查看挂单成交列表", notes = "查看挂单成交列表", response = OmsTransactionVO.class)
+    public Result<List<OmsOrderVO>> listOrder(@RequestBody @Valid OrderListParam params) {
+        Claims memberClaims = JwtUtils.getUserClaims(request);
+        Long memberId = Long.parseLong(memberClaims.getId());
+
+        List<OmsOrderDTO> orderDTOList = transactionsService.listOrder(memberId, params.getTransactionId());
+        List<OmsOrderVO> orderVOList = BeanCopierUtils.copyListProperties(orderDTOList, OmsOrderVO::new);
+        return Result.buildSuccess(orderVOList);
+    }
+
+
 
 }

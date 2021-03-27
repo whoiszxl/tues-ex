@@ -32,7 +32,7 @@ public class OmsOrderDTO extends AbstractObject implements Serializable {
     private Long memberId;
 
     @ApiModelProperty(value = "挂单ID")
-    private String transactionId;
+    private Long transactionId;
 
     @ApiModelProperty(value = "交易对第一个币种ID")
     private Integer coinId;

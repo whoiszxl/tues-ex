@@ -37,7 +37,12 @@ public class OmsTransactionDaoImpl implements OmsTransactionDao {
     }
 
     @Override
-    public Integer changeCountAndStatus(BigDecimal transactionCount, Integer status, Long id) {
-        return omsTransactionRepository.changeCountAndStatus(transactionCount, status, id);
+    public void changeCountAndStatus(BigDecimal transactionCount, Integer status, Long id) {
+        omsTransactionRepository.changeCountAndStatus(transactionCount, status, id);
+    }
+
+    @Override
+    public List<OmsTransaction> findAllByMemberIdOrderByIdDesc(Long memberId) {
+        return omsTransactionRepository.findAllByMemberIdOrderByIdDesc(memberId);
     }
 }

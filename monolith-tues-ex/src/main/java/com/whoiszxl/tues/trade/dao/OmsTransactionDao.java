@@ -48,9 +48,15 @@ public interface OmsTransactionDao {
      * @param transactionCount 挂单数量
      * @param status 状态
      * @param id 记录ID
+     */
+    void changeCountAndStatus(@Param("transactionCount") BigDecimal transactionCount,
+                              @Param("status") Integer status,
+                              @Param("id") Long id);
+
+    /**
+     * 通过用户ID降序查询列表
+     * @param memberId 用户ID
      * @return
      */
-    Integer changeCountAndStatus(@Param("transactionCount") BigDecimal transactionCount,
-                                 @Param("status") Integer status,
-                                 @Param("id") Long id);
+    List<OmsTransaction> findAllByMemberIdOrderByIdDesc(Long memberId);
 }

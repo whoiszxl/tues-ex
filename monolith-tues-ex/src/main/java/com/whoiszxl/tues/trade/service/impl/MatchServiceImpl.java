@@ -117,7 +117,7 @@ public class MatchServiceImpl implements MatchService {
         OmsOrder omsOrder = new OmsOrder();
         omsOrder.setId(idWorker.nextId());
         omsOrder.setMemberId(rowData.getMemberId());
-        omsOrder.setTransactionId(rowData.getId().toString());
+        omsOrder.setTransactionId(rowData.getId());
         omsOrder.setCoinId(rowData.getCoinId());
         omsOrder.setReplaceCoinId(rowData.getReplaceCoinId());
         omsOrder.setPrice(rowData.getPrice());

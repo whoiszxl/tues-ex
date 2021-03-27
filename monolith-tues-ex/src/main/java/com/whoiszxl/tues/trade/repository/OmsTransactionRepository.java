@@ -56,4 +56,12 @@ public interface OmsTransactionRepository extends BaseRepository<OmsTransaction>
     Integer changeCountAndStatus(@Param("transactionCount") BigDecimal transactionCount,
                                  @Param("status") Integer status,
                                  @Param("id") Long id);
+
+
+    /**
+     * 通过用户ID降序查询列表
+     * @param memberId 用户ID
+     * @return
+     */
+    List<OmsTransaction> findAllByMemberIdOrderByIdDesc(Long memberId);
 }

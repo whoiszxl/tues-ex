@@ -5,12 +5,17 @@ import com.whoiszxl.tues.common.enums.BuySellEnum;
 import com.whoiszxl.tues.common.enums.SwitchStatusEnum;
 import com.whoiszxl.tues.common.enums.TransactionStatusEnum;
 import com.whoiszxl.tues.common.exception.ExceptionCatcher;
+import com.whoiszxl.tues.common.utils.BeanCopierUtils;
 import com.whoiszxl.tues.common.utils.DateProvider;
 import com.whoiszxl.tues.common.utils.IdWorker;
 import com.whoiszxl.tues.member.dao.MemberWalletDao;
 import com.whoiszxl.tues.member.entity.UmsMemberWallet;
+import com.whoiszxl.tues.trade.dao.OmsOrderDao;
 import com.whoiszxl.tues.trade.dao.OmsTransactionDao;
+import com.whoiszxl.tues.trade.entity.OmsOrder;
 import com.whoiszxl.tues.trade.entity.OmsTransaction;
+import com.whoiszxl.tues.trade.entity.dto.OmsOrderDTO;
+import com.whoiszxl.tues.trade.entity.dto.OmsTransactionDTO;
 import com.whoiszxl.tues.trade.entity.dto.TransactionParamCheckDTO;
 import com.whoiszxl.tues.trade.entity.param.TransactionParam;
 import com.whoiszxl.tues.trade.service.MatchService;
@@ -20,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 挂单服务实现
@@ -35,6 +41,9 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Autowired
     private OmsTransactionDao transactionDao;
+
+    @Autowired
+    private OmsOrderDao orderDao;
 
     @Autowired
     private MatchService matchService;
@@ -83,7 +92,17 @@ public class TransactionServiceImpl implements TransactionService {
         return true;
     }
 
+    @Override
+    public List<OmsTransactionDTO> listTransaction(Long memberId) {
+        List<OmsTransaction> transactionList = transactionDao.findAllByMemberIdOrderByIdDesc(memberId);
+        return BeanCopierUtils.copyListProperties(transactionList, OmsTransactionDTO::new);
+    }
 
+    @Override
+    public List<OmsOrderDTO> listOrder(Long memberId, Long transactionId) {
+        List<OmsOrder> orderList = orderDao.findAllByMemberIdAndTransactionIdOrderByIdDesc(memberId, transactionId);
+        return BeanCopierUtils.copyListProperties(orderList, OmsOrderDTO::new);
+    }
 
     /**
      * 传入参数获取到需要校验的币种ID和操作金额

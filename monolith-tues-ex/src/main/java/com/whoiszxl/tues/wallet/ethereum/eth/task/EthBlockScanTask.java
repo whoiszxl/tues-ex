@@ -36,7 +36,7 @@ import java.util.List;
  * @date 2021/3/23
  */
 @Slf4j
-@Component
+//@Component
 public class EthBlockScanTask {
 
     @Autowired
@@ -134,15 +134,10 @@ public class EthBlockScanTask {
                 deposit.setCurrentConfirm(transaction.getBlockNumber().subtract(BigInteger.valueOf(i)).intValue());
                 deposit.setHeight(transaction.getBlockNumber().longValue());
                 deposit.setUpchainAt(dateProvider.longToLocalDateTime(block.getTimestamp().longValue()));
-
+                deposit.setUpchainStatus(UpchainStatusEnum.WAITING_CONFIRM.getCode());
                 deposit.setUpdatedAt(dateProvider.now());
                 deposit.setCreatedAt(dateProvider.now());
-                if(i - block.getNumber().intValue() >= coinInfo.getConfirms()) {
-                    deposit.setUpchainStatus(UpchainStatusEnum.SUCCESS.getCode());
-                    deposit.setUpchainSuccessAt(dateProvider.longToLocalDateTime(block.getTimestamp().longValue()));
-                }else {
-                    deposit.setUpchainStatus(UpchainStatusEnum.WAITING_CONFIRM.getCode());
-                }
+
                 depositService.saveDeposit(deposit);
             }
 
@@ -194,7 +189,10 @@ public class EthBlockScanTask {
             depositService.updateDeposit(depositDTO.clone(OmsDeposit.class));
 
             //给用户账户增加余额
-            memberWalletService.addBalance(depositDTO.getMemberId(), depositDTO.getCoinId(), depositDTO.getCoinName(), depositDTO.getDepositActual());
+            memberWalletService.addBalance(depositDTO.getMemberId(),
+                    depositDTO.getCoinId(),
+                    depositDTO.getCoinName(),
+                    depositDTO.getDepositActual());
         }
     }
 

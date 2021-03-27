@@ -35,4 +35,9 @@ public class OmsTransactionDaoImpl implements OmsTransactionDao {
     public List<OmsTransaction> getSellMatchTransactionList(Integer type, Long memberId, Integer coinId, Integer replaceCoinId, BigDecimal price) {
         return omsTransactionRepository.getSellMatchTransactionList(type, memberId, coinId, replaceCoinId, price);
     }
+
+    @Override
+    public Integer changeCountAndStatus(BigDecimal transactionCount, Integer status, Long id) {
+        return omsTransactionRepository.changeCountAndStatus(transactionCount, status, id);
+    }
 }

@@ -26,8 +26,8 @@ public interface UmsMemberWalletRepository extends BaseRepository<UmsMemberWalle
     @Modifying
     @Transactional
     @Query(value = "update ums_member_wallet " +
-                    "set lock_balance = lock_balance - ?3,usable_balance = usable_balance + ?3 " +
-                    "where member_id = ?1 and coin_id = ?2 and lock_balance >= ?3  and status = 1",
+                    "set usable_balance = usable_balance + ?3 " +
+                    "where member_id = ?1 and coin_id = ?2 and status = 1",
                 nativeQuery = true)
     int addBalance(Long memberId, Integer coinId, BigDecimal amount);
 

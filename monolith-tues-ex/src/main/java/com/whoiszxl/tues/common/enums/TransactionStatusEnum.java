@@ -13,7 +13,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum TransactionStatusEnum {
 
-    TRADE_OPEN("代表部分交易，可交易", 0),
+    TRADE_OPEN("代表部分交易，可交易", 2),
     TRADE_CLOSE("所有已成交，交易结束", 1),
     TRADE_CANCEL("用户撤单", -1)
     ;

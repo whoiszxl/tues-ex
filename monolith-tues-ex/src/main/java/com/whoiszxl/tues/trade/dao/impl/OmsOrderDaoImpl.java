@@ -1,6 +1,9 @@
 package com.whoiszxl.tues.trade.dao.impl;
 
 import com.whoiszxl.tues.trade.dao.OmsOrderDao;
+import com.whoiszxl.tues.trade.entity.OmsOrder;
+import com.whoiszxl.tues.trade.repository.OmsOrderRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -11,5 +14,12 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class OmsOrderDaoImpl implements OmsOrderDao {
-    
+
+    @Autowired
+    private OmsOrderRepository omsOrderRepository;
+
+    @Override
+    public OmsOrder save(OmsOrder omsOrder) {
+        return omsOrderRepository.save(omsOrder);
+    }
 }

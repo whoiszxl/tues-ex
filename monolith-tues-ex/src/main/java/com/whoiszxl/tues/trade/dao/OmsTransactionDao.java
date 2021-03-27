@@ -1,6 +1,7 @@
 package com.whoiszxl.tues.trade.dao;
 
 import com.whoiszxl.tues.trade.entity.OmsTransaction;
+import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -41,4 +42,15 @@ public interface OmsTransactionDao {
      * @return
      */
     List<OmsTransaction> getSellMatchTransactionList(Integer type, Long memberId, Integer coinId, Integer replaceCoinId, BigDecimal price);
+
+    /**
+     * 修改挂单的数量和状态
+     * @param transactionCount 挂单数量
+     * @param status 状态
+     * @param id 记录ID
+     * @return
+     */
+    Integer changeCountAndStatus(@Param("transactionCount") BigDecimal transactionCount,
+                                 @Param("status") Integer status,
+                                 @Param("id") Long id);
 }

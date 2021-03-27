@@ -17,6 +17,7 @@ import com.whoiszxl.tues.trade.service.MatchService;
 import com.whoiszxl.tues.trade.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
@@ -45,6 +46,7 @@ public class TransactionServiceImpl implements TransactionService {
     private IdWorker idWorker;
 
     @Override
+    //@Transactional(rollbackFor = Exception.class)
     public boolean add(TransactionParam transactionParam) {
         Long memberId = transactionParam.getMemberId();
 
@@ -56,7 +58,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         //校验余额是否充足
         UmsMemberWallet memberWallet = memberWalletDao.findByMemberIdAndCoinId(memberId, checkCoinId);
-        this.checkBalanceVaild(transactionBalance, memberWallet);
+        this.checkBalanceValid(transactionBalance, memberWallet);
 
         //锁定余额: 减去usable_balance,加上lock_balance
         memberWalletDao.lockBalance(memberId, checkCoinId, transactionBalance);
@@ -74,9 +76,11 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setStatus(TransactionStatusEnum.TRADE_OPEN.getValue());
         transaction.setCreatedAt(dateProvider.now());
         transaction.setUpdatedAt(dateProvider.now());
-        transactionDao.save(transaction);
+        OmsTransaction result = transactionDao.save(transaction);
 
-        return false;
+        matchService.matchOrder(result);
+
+        return true;
     }
 
 
@@ -120,7 +124,7 @@ public class TransactionServiceImpl implements TransactionService {
      * @param transactionBalance 交易金额
      * @param memberWallet 用户资产信息
      */
-    private void checkBalanceVaild(BigDecimal transactionBalance, UmsMemberWallet memberWallet) {
+    private void checkBalanceValid(BigDecimal transactionBalance, UmsMemberWallet memberWallet) {
         if(memberWallet == null
                 || SwitchStatusEnum.STATUS_CLOSE.getStatusCode().equals(memberWallet.getStatus())
                 || memberWallet.getUsableBalance().compareTo(transactionBalance) < 0) {

@@ -143,16 +143,10 @@ public class BtcBlockScanTask {
                     deposit.setCurrentConfirm(block.confirmations());
                     deposit.setHeight(Long.parseLong(block.height() + ""));
                     deposit.setUpchainAt(dateProvider.dateToLocalDateTime(block.time()));
-
+                    deposit.setUpchainStatus(UpchainStatusEnum.WAITING_CONFIRM.getCode());
                     deposit.setUpdatedAt(dateProvider.now());
                     deposit.setCreatedAt(dateProvider.now());
 
-                    if(block.confirmations() >= coinInfo.getConfirms()) {
-                        deposit.setUpchainSuccessAt(dateProvider.dateToLocalDateTime(block.time()));
-                        deposit.setUpchainStatus(UpchainStatusEnum.SUCCESS.getCode());
-                    }else {
-                        deposit.setUpchainStatus(UpchainStatusEnum.WAITING_CONFIRM.getCode());
-                    }
                     depositService.saveDeposit(deposit);
                 }
 

@@ -32,10 +32,14 @@ public interface OmsTransactionRepository extends BaseRepository<OmsTransaction>
 
 
     @Query(value = "select * from oms_transaction " +
-            "where status = 2 and type != :type and member_id != :memberId " +
-            "and coin_id = :coinId and replace_coin_id = :replaceCoinId and current_count > 0 " +
-            "and price >= :price " +
-            "order by price desc", nativeQuery = true)
+                    "where status = 2 " +
+                    "and type != :type " +
+                    "and member_id != :memberId " +
+                    "and coin_id = :coinId " +
+                    "and replace_coin_id = :replaceCoinId " +
+                    "and current_count > 0 " +
+                    "and price >= :price " +
+                    "order by price desc", nativeQuery = true)
     List<OmsTransaction> getSellMatchTransactionList(@Param("type") Integer type,
                                                         @Param("memberId") Long memberId,
                                                         @Param("coinId") Integer coinId,

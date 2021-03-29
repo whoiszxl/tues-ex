@@ -22,7 +22,6 @@ import com.whoiszxl.tues.trade.service.MatchService;
 import com.whoiszxl.tues.trade.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -81,7 +80,7 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setPrice(transactionParam.getPrice());
         transaction.setTotalCount(transactionParam.getCount());
         transaction.setCurrentCount(transactionParam.getCount());
-        transaction.setType(buyOrSell);
+        transaction.setDirection(buyOrSell);
         transaction.setStatus(TransactionStatusEnum.TRADE_OPEN.getValue());
         transaction.setCreatedAt(dateProvider.now());
         transaction.setUpdatedAt(dateProvider.now());

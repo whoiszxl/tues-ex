@@ -46,7 +46,10 @@ public class OmsTransactionDTO extends AbstractObject implements Serializable {
     @ApiModelProperty(value = "当前可交易数量（挂单的金额可能超过当前所有挂单的总和）")
     private BigDecimal currentCount;
 
-    @ApiModelProperty(value = "1：买入 -1：卖出")
+    @ApiModelProperty(value = "买卖方向 1：买入 -1：卖出")
+    private Integer direction;
+
+    @ApiModelProperty(value = "挂单类型 1：限价 2：市价")
     private Integer type;
 
     @ApiModelProperty(value = "0代表部分交易，可交易，1是所有已成交，交易结束， -1用户撤单")

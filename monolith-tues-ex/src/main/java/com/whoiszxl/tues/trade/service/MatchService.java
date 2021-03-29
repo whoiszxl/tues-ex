@@ -1,5 +1,6 @@
 package com.whoiszxl.tues.trade.service;
 
+import com.whoiszxl.tues.common.mq.MessageTypeEnum;
 import com.whoiszxl.tues.trade.entity.OmsTransaction;
 
 /**
@@ -11,8 +12,8 @@ import com.whoiszxl.tues.trade.entity.OmsTransaction;
 public interface MatchService {
 
     /**
-     * 异步调用撮合的接口功能
+     * 发送消息到撮合系统中
      * @param transaction 挂单信息
      */
-    void matchOrder(OmsTransaction transaction);
+    void send(OmsTransaction transaction, MessageTypeEnum messageTypeEnum);
 }

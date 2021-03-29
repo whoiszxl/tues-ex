@@ -3,6 +3,7 @@ package com.whoiszxl.tues.trade.service.impl;
 import com.whoiszxl.tues.common.enums.BuySellEnum;
 import com.whoiszxl.tues.common.enums.SwitchStatusEnum;
 import com.whoiszxl.tues.common.enums.TransactionStatusEnum;
+import com.whoiszxl.tues.common.mq.MessageTypeEnum;
 import com.whoiszxl.tues.common.utils.DateProvider;
 import com.whoiszxl.tues.common.utils.IdWorker;
 import com.whoiszxl.tues.member.dao.MemberWalletDao;
@@ -25,7 +26,7 @@ import java.util.List;
  * @author zhouxiaolong
  * @date 2021/3/26
  */
-@Service
+//@Service
 public class MatchServiceImpl implements MatchService {
 
     @Autowired
@@ -48,16 +49,16 @@ public class MatchServiceImpl implements MatchService {
      * @param transactionData 挂单信息
      */
     @Override
-    public void matchOrder(OmsTransaction transactionData) {
+    public void send(OmsTransaction transactionData, MessageTypeEnum messageTypeEnum) {
         //查询其他人的挂单，并且交易方向是反向的记录
-        List<OmsTransaction> otherTransactionList = transactionData.getType().equals(BuySellEnum.BUY.getValue()) ?
-                transactionDao.getBuyMatchTransactionList(transactionData.getType(),
+        List<OmsTransaction> otherTransactionList = transactionData.getDirection().equals(BuySellEnum.BUY.getValue()) ?
+                transactionDao.getBuyMatchTransactionList(transactionData.getDirection(),
                         transactionData.getMemberId(),
                         transactionData.getCoinId(),
                         transactionData.getReplaceCoinId(),
                         transactionData.getPrice())
                 :
-                transactionDao.getSellMatchTransactionList(transactionData.getType(),
+                transactionDao.getSellMatchTransactionList(transactionData.getDirection(),
                         transactionData.getMemberId(),
                         transactionData.getCoinId(),
                         transactionData.getReplaceCoinId(),
@@ -121,7 +122,7 @@ public class MatchServiceImpl implements MatchService {
         omsOrder.setCoinId(rowData.getCoinId());
         omsOrder.setReplaceCoinId(rowData.getReplaceCoinId());
         omsOrder.setPrice(rowData.getPrice());
-        omsOrder.setType(rowData.getType());
+        omsOrder.setType(rowData.getDirection());
         omsOrder.setSuccessCount(transactionCount);
         omsOrder.setCreatedAt(dateProvider.now());
         omsOrder.setUpdatedAt(dateProvider.now());
@@ -133,7 +134,7 @@ public class MatchServiceImpl implements MatchService {
         BigDecimal addCoinCount;
 
         //如果是买，则增加的是交易对第一个币种的数量，数量就是买入数量
-        if(rowData.getType().equals(BuySellEnum.BUY.getValue())) {
+        if(rowData.getDirection().equals(BuySellEnum.BUY.getValue())) {
             addCoinId = rowData.getCoinId();
             addCoinCount = transactionCount;
         }else {
@@ -169,7 +170,7 @@ public class MatchServiceImpl implements MatchService {
         //4. 减少卖出的余额数量
         Integer subCoinId;
         BigDecimal subCoinCount;
-        if(rowData.getType().equals(BuySellEnum.BUY.getValue())) {
+        if(rowData.getDirection().equals(BuySellEnum.BUY.getValue())) {
             subCoinId = rowData.getReplaceCoinId();
             subCoinCount = transactionCount.multiply(rowData.getPrice());
         }else {

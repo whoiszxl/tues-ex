@@ -1,10 +1,8 @@
-package com.whoiszxl.tues.trade.entity;
+package com.whoiszxl.tues.trade.entity.dto;
 
 import com.whoiszxl.tues.common.bean.AbstractObject;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -14,21 +12,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * <p>
- * 挂单表
- * </p>
- *
- * @author whoiszxl
- * @since 2021-03-17
+ * 撮合挂单消息DTO实体
  */
 @Data
-@Table(name = "oms_transaction")
-@Entity
-public class OmsTransaction extends AbstractObject implements Serializable {
+public class TransactionMessageDTO extends AbstractObject implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
     @ApiModelProperty(value = "主键ID")
     private Long id;
 
@@ -59,10 +49,7 @@ public class OmsTransaction extends AbstractObject implements Serializable {
     @ApiModelProperty(value = "2代表部分交易，可交易，1是所有已成交，交易结束， -1用户撤单")
     private Integer status;
 
-    @ApiModelProperty(value = "创建时间,挂单时间")
-    private LocalDateTime createdAt;
-
-    @ApiModelProperty(value = "更新时间")
-    private LocalDateTime updatedAt;
+    @ApiModelProperty(value = "消息类型")
+    private Integer messageType;
 
 }

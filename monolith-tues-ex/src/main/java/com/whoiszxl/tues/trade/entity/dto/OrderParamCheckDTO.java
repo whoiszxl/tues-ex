@@ -13,11 +13,11 @@ import java.math.BigDecimal;
  */
 @Data
 @Builder
-public class TransactionParamCheckDTO {
+public class OrderParamCheckDTO {
 
     private Integer checkCoinId;
 
-    private BigDecimal transactionBalance;
+    private BigDecimal orderBalance;
 
     private Integer buyOrSell;
 

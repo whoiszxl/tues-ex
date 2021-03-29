@@ -12,7 +12,7 @@ import java.math.BigDecimal;
  * @date 2021/3/26
  */
 @Data
-public class TransactionParam {
+public class OrderParam {
 
     @ApiModelProperty("用户ID")
     private Long memberId;

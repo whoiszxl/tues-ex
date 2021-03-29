@@ -11,7 +11,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum TransactionStatusEnum {
+public enum OrderStatusEnum {
 
     TRADE_OPEN("代表部分交易，可交易", 2),
     TRADE_CLOSE("所有已成交，交易结束", 1),

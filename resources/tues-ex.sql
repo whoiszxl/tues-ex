@@ -362,8 +362,8 @@ CREATE TABLE `oms_contract` (
 	PRIMARY KEY (`id`)
 ) ENGINE = InnoDB CHARSET = utf8mb4 COMMENT '交易对表';
 
-DROP TABLE IF EXISTS `oms_transaction`;
-CREATE TABLE `oms_transaction` (
+DROP TABLE IF EXISTS `oms_order`;
+CREATE TABLE `oms_order` (
 	`id` bigint(20) NOT NULL COMMENT '挂单主键ID',
 	`member_id` bigint(20) NOT NULL COMMENT '用户ID',
 	`coin_id` int(10) NOT NULL COMMENT '交易对第一个币种ID',
@@ -379,11 +379,11 @@ CREATE TABLE `oms_transaction` (
 	PRIMARY KEY (`id`)
 ) ENGINE = InnoDB CHARSET = utf8mb4 COMMENT '挂单表';
 
-DROP TABLE IF EXISTS `oms_order`;
-CREATE TABLE `oms_order` (
+DROP TABLE IF EXISTS `oms_deal`;
+CREATE TABLE `oms_deal` (
 	`id` bigint(20) NOT NULL COMMENT '订单主键ID',
 	`member_id` bigint(20) NOT NULL COMMENT '买家用户ID',
-	`transaction_id` varchar(20) NOT NULL COMMENT '挂单ID',
+	`order_id` varchar(20) NOT NULL COMMENT '挂单ID',
 	`coin_id` int(10) NOT NULL COMMENT '交易对第一个币种ID',
 	`replace_coin_id` int(10) NOT NULL COMMENT '交易对第二个币种ID',
 	`price` decimal(40, 18) NOT NULL DEFAULT '0.0000' COMMENT '成交价格',

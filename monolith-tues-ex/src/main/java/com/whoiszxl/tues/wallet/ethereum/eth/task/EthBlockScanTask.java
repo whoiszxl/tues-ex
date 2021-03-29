@@ -69,7 +69,7 @@ public class EthBlockScanTask {
      * https://txstreet.com/
      */
     @Scheduled(fixedDelay = 10 * 1000)
-    public void scanOrder() {
+    public void scanDeposit() {
         //获取当前货币的配置信息
         OmsCoinDTO coinInfo = coinService.findCoinByName(COIN_NAME);
 

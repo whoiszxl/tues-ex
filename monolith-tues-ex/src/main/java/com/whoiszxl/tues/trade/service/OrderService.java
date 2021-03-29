@@ -1,8 +1,8 @@
 package com.whoiszxl.tues.trade.service;
 
+import com.whoiszxl.tues.trade.entity.dto.OmsDealDTO;
 import com.whoiszxl.tues.trade.entity.dto.OmsOrderDTO;
-import com.whoiszxl.tues.trade.entity.dto.OmsTransactionDTO;
-import com.whoiszxl.tues.trade.entity.param.TransactionParam;
+import com.whoiszxl.tues.trade.entity.param.OrderParam;
 
 import java.util.List;
 
@@ -12,27 +12,27 @@ import java.util.List;
  * @author zhouxiaolong
  * @date 2021/3/26
  */
-public interface TransactionService {
+public interface OrderService {
 
     /**
      * 挂单
-     * @param transactionParam 挂单参数
+     * @param orderParam 挂单参数
      * @return
      */
-    boolean add(TransactionParam transactionParam);
+    boolean add(OrderParam orderParam);
 
     /**
      * 查看指定用户的当前挂单列表
      * @param memberId 用户ID
      * @return
      */
-    List<OmsTransactionDTO> listTransaction(Long memberId);
+    List<OmsOrderDTO> listOrder(Long memberId);
 
     /**
      * 查看已成交详情列表
      * @param memberId 用户ID
-     * @param transactionId 挂单ID
+     * @param orderId 挂单ID
      * @return
      */
-    List<OmsOrderDTO> listOrder(Long memberId, Long transactionId);
+    List<OmsDealDTO> listDeal(Long memberId, Long orderId);
 }

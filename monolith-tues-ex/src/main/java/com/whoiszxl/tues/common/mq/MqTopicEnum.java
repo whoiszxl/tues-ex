@@ -10,7 +10,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum MqTopicEnum {
 
-    ADD_TRANSACTION_TOPIC("add-transaction-topic", "发送一笔挂单主题");
+    ADD_ORDER_TOPIC("add-order-topic", "发送一笔挂单主题");
 
     private final String topic;
     private final String desc;

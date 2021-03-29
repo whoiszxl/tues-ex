@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
  * 撮合挂单消息DTO实体
  */
 @Data
-public class TransactionMessageDTO extends AbstractObject implements Serializable {
+public class OrderMessageDTO extends AbstractObject implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

@@ -377,7 +377,7 @@ CREATE TABLE `oms_order` (
 	`created_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间,挂单时间',
 	`updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 	PRIMARY KEY (`id`)
-) ENGINE = InnoDB CHARSET = utf8mb4 COMMENT '挂单表';
+) ENGINE = InnoDB CHARSET = utf8mb4 COMMENT '委托挂单表';
 
 DROP TABLE IF EXISTS `oms_deal`;
 CREATE TABLE `oms_deal` (

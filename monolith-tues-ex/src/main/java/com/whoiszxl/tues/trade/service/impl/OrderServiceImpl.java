@@ -5,7 +5,7 @@ import com.whoiszxl.tues.common.enums.BuySellEnum;
 import com.whoiszxl.tues.common.enums.SwitchStatusEnum;
 import com.whoiszxl.tues.common.enums.OrderStatusEnum;
 import com.whoiszxl.tues.common.exception.ExceptionCatcher;
-import com.whoiszxl.tues.common.mq.MessageTypeEnum;
+import com.whoiszxl.tues.common.mq.MessageTypeConstants;
 import com.whoiszxl.tues.common.utils.BeanCopierUtils;
 import com.whoiszxl.tues.common.utils.DateProvider;
 import com.whoiszxl.tues.common.utils.IdWorker;
@@ -87,7 +87,7 @@ public class OrderServiceImpl implements OrderService {
         order.setUpdatedAt(dateProvider.now());
         OmsOrder result = orderDao.save(order);
 
-        matchService.send(result, MessageTypeEnum.NEW_ORDER);
+        matchService.send(result, MessageTypeConstants.NEW_ORDER);
 
         return true;
     }

@@ -24,7 +24,7 @@ public class OrderParam {
     private BigDecimal count;
 
     @ApiModelProperty("交易对ID")
-    private Long contractId;
+    private Long pairId;
 
     @ApiModelProperty(value = "交易对第一个币种ID")
     private Integer coinId;

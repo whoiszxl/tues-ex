@@ -1,8 +1,10 @@
-package com.whoiszxl.tues.trade.entity.dto;
+package com.whoiszxl.tues.trade.entity;
 
 import com.whoiszxl.tues.common.bean.AbstractObject;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -20,7 +22,9 @@ import java.time.LocalDateTime;
  * @since 2021-03-17
  */
 @Data
-public class OmsContractDTO extends AbstractObject implements Serializable {
+@Table(name = "oms_pair")
+@Entity
+public class OmsPair extends AbstractObject implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,10 +33,10 @@ public class OmsContractDTO extends AbstractObject implements Serializable {
     private Long id;
 
     @ApiModelProperty(value = "交易对名称")
-    private String contractName;
+    private String pairName;
 
     @ApiModelProperty(value = "交易对类型：1:主流币 2:DeFi 3:存储")
-    private Integer contractType;
+    private Integer pairType;
 
     @ApiModelProperty(value = "交易对第一个币种ID")
     private Integer coinId;

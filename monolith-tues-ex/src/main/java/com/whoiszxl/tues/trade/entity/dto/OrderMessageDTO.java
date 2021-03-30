@@ -50,6 +50,6 @@ public class OrderMessageDTO extends AbstractObject implements Serializable {
     private Integer status;
 
     @ApiModelProperty(value = "消息类型")
-    private Integer messageType;
+    private String messageType;
 
 }

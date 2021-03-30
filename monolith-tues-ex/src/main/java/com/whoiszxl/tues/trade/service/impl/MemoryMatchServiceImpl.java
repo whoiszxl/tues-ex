@@ -19,11 +19,11 @@ public class MemoryMatchServiceImpl implements MatchService {
     private MqSenderFactory mqSenderFactory;
 
     @Override
-    public void send(OmsOrder order, MessageTypeEnum messageTypeEnum) {
+    public void send(OmsOrder order, String messageType) {
         MqSender mqSender = mqSenderFactory.get(MqEnum.KAFKA);
         //内存撮合需要的参数 用户ID, 交易对币种，交易方向，价格，量，挂单委托类型，挂单主键ID
         OrderMessageDTO messageDTO = order.clone(OrderMessageDTO.class);
-        messageDTO.setMessageType(messageTypeEnum.getCode());
+        messageDTO.setMessageType(messageType);
         mqSender.send(MqTopicEnum.ADD_ORDER_TOPIC.getTopic(), JSONUtil.toJsonStr(messageDTO));
     }
 }

@@ -3,7 +3,6 @@ package com.whoiszxl.tues.trade.service.impl;
 import com.whoiszxl.tues.common.enums.BuySellEnum;
 import com.whoiszxl.tues.common.enums.SwitchStatusEnum;
 import com.whoiszxl.tues.common.enums.OrderStatusEnum;
-import com.whoiszxl.tues.common.mq.MessageTypeEnum;
 import com.whoiszxl.tues.common.utils.DateProvider;
 import com.whoiszxl.tues.common.utils.IdWorker;
 import com.whoiszxl.tues.member.dao.MemberWalletDao;
@@ -48,7 +47,7 @@ public class MatchServiceImpl implements MatchService {
      * @param order 挂单信息
      */
     @Override
-    public void send(OmsOrder order, MessageTypeEnum messageTypeEnum) {
+    public void send(OmsOrder order, String messageType) {
         //查询其他人的挂单，并且交易方向是反向的记录
         List<OmsOrder> otherOrderList = order.getDirection().equals(BuySellEnum.BUY.getValue()) ?
                 orderDao.getBuyMatchOrderList(order.getDirection(),

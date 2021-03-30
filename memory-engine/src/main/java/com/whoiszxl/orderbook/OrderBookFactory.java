@@ -25,40 +25,40 @@ public class OrderBookFactory {
 
     /**
      * 添加一个订单簿到map中
-     * @param contractName 交易对名称
+     * @param pairName 交易对名称
      * @param orderBook 订单簿
      */
-    public void addOrderBook(String contractName, OrderBook orderBook) {
-        if (!orderBookMap.containsKey(contractName)) {
-            orderBookMap.put(contractName, orderBook);
+    public void addOrderBook(String pairName, OrderBook orderBook) {
+        if (!orderBookMap.containsKey(pairName)) {
+            orderBookMap.put(pairName, orderBook);
         }
     }
 
     /**
      * 重设订单簿
-     * @param contractName 交易对名称
+     * @param pairName 交易对名称
      * @param orderBook 订单簿
      */
-    public void resetOrderBook(String contractName, OrderBook orderBook) {
-        orderBookMap.put(contractName, orderBook);
+    public void resetOrderBook(String pairName, OrderBook orderBook) {
+        orderBookMap.put(pairName, orderBook);
     }
 
     /**
      * 判断容器是否包含此交易对的订单簿
-     * @param contractName 交易对名称
+     * @param pairName 交易对名称
      * @return
      */
-    public boolean containsOrderBook(String contractName) {
-        return orderBookMap.containsKey(contractName);
+    public boolean containsOrderBook(String pairName) {
+        return orderBookMap.containsKey(pairName);
     }
 
     /**
      * 通过交易对名称获取订单簿
-     * @param contractName 订单簿名称
+     * @param pairName 订单簿名称
      * @return
      */
-    public OrderBook getOrderBook(String contractName) {
-        return orderBookMap.get(contractName);
+    public OrderBook getOrderBook(String pairName) {
+        return orderBookMap.get(pairName);
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.whoiszxl.enums;
+package com.whoiszxl.constants;
 
 /**
  * 撮合消息类型枚举

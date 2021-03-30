@@ -1,6 +1,5 @@
 package com.whoiszxl.aspect;
 
-import com.whoiszxl.tues.common.utils.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -17,9 +16,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class RiskAspect {
-
-    @Autowired
-    private RedisUtils redisUtils;
 
     private ThreadLocal<Long> startTime = new ThreadLocal<>();
 

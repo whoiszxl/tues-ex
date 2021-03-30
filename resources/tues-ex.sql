@@ -345,11 +345,11 @@ CREATE TABLE `oms_inner_transfer` (
 	PRIMARY KEY (`id`)
 ) ENGINE = InnoDB CHARSET = utf8mb4 COMMENT '内部转账表';
 
-DROP TABLE IF EXISTS `oms_contract`;
-CREATE TABLE `oms_contract` (
+DROP TABLE IF EXISTS `oms_pair`;
+CREATE TABLE `oms_pair` (
 	`id` int(4) NOT NULL COMMENT '主键ID,交易对ID',
-	`contract_name` varchar(20) NOT NULL COMMENT '交易对名称',
-	`contract_type` tinyint(2) DEFAULT '1' COMMENT '交易对类型：1:主流币 2:DeFi 3:存储',
+	`pair_name` varchar(20) NOT NULL COMMENT '交易对名称',
+	`pair_type` tinyint(2) DEFAULT '1' COMMENT '交易对类型：1:主流币 2:DeFi 3:存储',
 	`coin_id` int(10) NOT NULL COMMENT '交易对第一个币种ID',
 	`replace_coin_id` int(10) NOT NULL COMMENT '交易对第二个币种ID',
 	`buyer_fee` decimal(40, 18) NOT NULL DEFAULT '0.001' COMMENT '购买者所出费率',

@@ -368,6 +368,7 @@ DROP TABLE IF EXISTS `oms_order`;
 CREATE TABLE `oms_order` (
 	`id` bigint(20) NOT NULL COMMENT '挂单主键ID',
 	`member_id` bigint(20) NOT NULL COMMENT '用户ID',
+	`pair_name` varchar(20) NOT NULL COMMENT '交易对名称',
 	`coin_id` int(10) NOT NULL COMMENT '交易对第一个币种ID',
 	`replace_coin_id` int(10) NOT NULL COMMENT '交易对第二个币种ID',
 	`price` decimal(40, 18) NOT NULL DEFAULT '0.0000' COMMENT '委托价格',

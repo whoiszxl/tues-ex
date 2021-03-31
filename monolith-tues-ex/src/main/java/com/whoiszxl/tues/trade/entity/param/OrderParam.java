@@ -26,12 +26,6 @@ public class OrderParam {
     @ApiModelProperty("交易对ID")
     private Long pairId;
 
-    @ApiModelProperty(value = "交易对第一个币种ID")
-    private Integer coinId;
-
-    @ApiModelProperty(value = "交易对第二个币种ID")
-    private Integer replaceCoinId;
-
     @ApiModelProperty(value = "交易类型  1:买入 -1:卖出")
     private Integer type;
 }

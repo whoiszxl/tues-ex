@@ -23,7 +23,8 @@ public class MemoryMatchServiceImpl implements MatchService {
         MqSender mqSender = mqSenderFactory.get(MqEnum.KAFKA);
         //内存撮合需要的参数 用户ID, 交易对币种，交易方向，价格，量，挂单委托类型，挂单主键ID
         OrderMessageDTO messageDTO = order.clone(OrderMessageDTO.class);
+        messageDTO.setOrderId(order.getId());
         messageDTO.setMessageType(messageType);
-        mqSender.send(MqTopicEnum.ADD_ORDER_TOPIC.getTopic(), JSONUtil.toJsonStr(messageDTO));
+        mqSender.send(MessageTypeConstants.NEW_ORDER, JSONUtil.toJsonStr(messageDTO));
     }
 }

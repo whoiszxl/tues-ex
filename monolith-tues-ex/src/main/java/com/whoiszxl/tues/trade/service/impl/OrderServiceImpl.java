@@ -2,8 +2,9 @@ package com.whoiszxl.tues.trade.service.impl;
 
 import com.whoiszxl.tues.common.bean.Result;
 import com.whoiszxl.tues.common.enums.BuySellEnum;
-import com.whoiszxl.tues.common.enums.SwitchStatusEnum;
 import com.whoiszxl.tues.common.enums.OrderStatusEnum;
+import com.whoiszxl.tues.common.enums.OrderTypeEnum;
+import com.whoiszxl.tues.common.enums.SwitchStatusEnum;
 import com.whoiszxl.tues.common.exception.ExceptionCatcher;
 import com.whoiszxl.tues.common.mq.MessageTypeConstants;
 import com.whoiszxl.tues.common.utils.BeanCopierUtils;
@@ -17,15 +18,18 @@ import com.whoiszxl.tues.trade.entity.OmsDeal;
 import com.whoiszxl.tues.trade.entity.OmsOrder;
 import com.whoiszxl.tues.trade.entity.dto.OmsDealDTO;
 import com.whoiszxl.tues.trade.entity.dto.OmsOrderDTO;
+import com.whoiszxl.tues.trade.entity.dto.OmsPairDTO;
 import com.whoiszxl.tues.trade.entity.dto.OrderParamCheckDTO;
 import com.whoiszxl.tues.trade.entity.param.OrderParam;
 import com.whoiszxl.tues.trade.service.MatchService;
 import com.whoiszxl.tues.trade.service.OrderService;
+import com.whoiszxl.tues.trade.service.PairService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 挂单服务实现
@@ -46,6 +50,9 @@ public class OrderServiceImpl implements OrderService {
     private OmsDealDao dealDao;
 
     @Autowired
+    private PairService pairService;
+
+    @Autowired
     private MatchService matchService;
 
     @Autowired
@@ -57,10 +64,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     //@Transactional(rollbackFor = Exception.class)
     public boolean add(OrderParam orderParam) {
+        //获取交易对信息
+        List<OmsPairDTO> pairDTOList = pairService.pairList();
+        Optional<OmsPairDTO> pairDTO = pairDTOList.stream().filter(item -> item.getId().equals(orderParam.getPairId())).findFirst();
+        OmsPairDTO omsPairDTO = pairDTO.get();
+
         Long memberId = orderParam.getMemberId();
 
         //通过买卖方向获取需要交易的币种ID和交易的金额（数量）
-        OrderParamCheckDTO checkParam = this.getCheckParam(orderParam);
+        OrderParamCheckDTO checkParam = this.getCheckParam(orderParam, omsPairDTO);
         Integer checkCoinId = checkParam.getCheckCoinId();
         BigDecimal orderBalance = checkParam.getOrderBalance();
         Integer buyOrSell = checkParam.getBuyOrSell();
@@ -76,12 +88,14 @@ public class OrderServiceImpl implements OrderService {
         OmsOrder order = new OmsOrder();
         order.setId(idWorker.nextId());
         order.setMemberId(memberId);
-        order.setCoinId(orderParam.getCoinId());
-        order.setReplaceCoinId(orderParam.getReplaceCoinId());
+        order.setPairName(omsPairDTO.getPairName());
+        order.setCoinId(omsPairDTO.getCoinId());
+        order.setReplaceCoinId(omsPairDTO.getReplaceCoinId());
         order.setPrice(orderParam.getPrice());
         order.setTotalCount(orderParam.getCount());
         order.setCurrentCount(orderParam.getCount());
         order.setDirection(buyOrSell);
+        order.setType(OrderTypeEnum.LIMIT.getValue());
         order.setStatus(OrderStatusEnum.TRADE_OPEN.getValue());
         order.setCreatedAt(dateProvider.now());
         order.setUpdatedAt(dateProvider.now());
@@ -109,7 +123,7 @@ public class OrderServiceImpl implements OrderService {
      * @param orderParam 检验参数
      * @return OrderParamCheckDTO 返回结果
      */
-    private OrderParamCheckDTO getCheckParam(OrderParam orderParam) {
+    private OrderParamCheckDTO getCheckParam(OrderParam orderParam, OmsPairDTO omsPairDTO) {
         Integer checkCoinId = null;
         BigDecimal orderBalance = null;
         Integer buyOrSell = 1;
@@ -118,7 +132,7 @@ public class OrderServiceImpl implements OrderService {
         //如果交易对为 ETH/USDT，方向是买，则ETH是被买的币种，需要用USDT换ETH。
         //购买价格如果为5USDT，数量为2,则是购买2个ETH需要10个USDT。
         if(orderParam.getType().equals(BuySellEnum.BUY.getValue())) {
-            checkCoinId = orderParam.getReplaceCoinId();
+            checkCoinId = omsPairDTO.getReplaceCoinId();
             orderBalance = orderParam.getPrice().multiply(orderParam.getCount());
             buyOrSell = BuySellEnum.BUY.getValue();
         }
@@ -126,7 +140,7 @@ public class OrderServiceImpl implements OrderService {
         //如果交易对为 ETH/USDT，方向是卖，则ETH是被卖的币种，需要进行余额校验的。
         //交易支出的金额就是交易数量，2个ETH。
         if(orderParam.getType().equals(BuySellEnum.SELL.getValue())) {
-            checkCoinId = orderParam.getCoinId();
+            checkCoinId = omsPairDTO.getCoinId();
             orderBalance = orderParam.getCount();
             buyOrSell = BuySellEnum.SELL.getValue();
         }

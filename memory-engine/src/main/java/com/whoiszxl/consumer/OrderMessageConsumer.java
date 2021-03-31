@@ -2,11 +2,13 @@ package com.whoiszxl.consumer;
 
 import com.whoiszxl.constants.MessageTypeConstants;
 import com.whoiszxl.entity.ExOrder;
+import com.whoiszxl.entity.Result;
 import com.whoiszxl.orderbook.OrderBook;
 import com.whoiszxl.orderbook.OrderBookFactory;
 import com.whoiszxl.utils.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -25,11 +27,14 @@ public class OrderMessageConsumer {
     @Autowired
     private OrderBookFactory orderBookFactory;
 
-    @KafkaListener(topics = MessageTypeConstants.NEW_ORDER)
-    public void newOrderSub(ConsumerRecord<String, String> record, Acknowledgment ack, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+    @KafkaListener(topics = MessageTypeConstants.NEW_ORDER, groupId = "default-group")
+    public void newOrderSub(ConsumerRecord<String, String> record,
+                            Acknowledgment ack,
+                            @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
+                            Consumer consumer) {
         log.info("订阅到新订单，开始处理, 主题为：{}， ack为：{}， 消息值为：{}", topic, ack, record.value());
         ExOrder exOrder = JsonUtil.fromJson(record.value(), ExOrder.class);
-        if(ObjectUtils.isEmpty(exOrder)) {
+        if(ObjectUtils.isEmpty(exOrder) || exOrder.getOrderId() == null) {
             return;
         }
 
@@ -37,19 +42,24 @@ public class OrderMessageConsumer {
 
         if(orderBook.getPause() || !orderBook.getReady()) {
             //TODO 订单簿未初始化完成或已暂停，直接撤回订单
+
         }
 
         if(!orderBook.getPause() && orderBook.getReady()) {
             //开始执行交易逻辑
             try {
                 long startTime = System.currentTimeMillis();
-                orderBook.newOrder(exOrder);
+                Result result = orderBook.newOrder(exOrder);
                 long endTime = System.currentTimeMillis();
-                log.info("完成此撮合，订单ID={}, 耗时：{}ms", exOrder.getOrderId(), endTime - startTime);
+                if(result.isOk()) {
+                    consumer.commitSync();
+                    log.info("完成此撮合，订单ID={}, 耗时：{}ms", exOrder.getOrderId(), endTime - startTime);
+                    return;
+                }
             }catch (Exception e) {
                 log.error("撮合失败", e);
-                //TODO 撮合失败需要撤回订单
             }
+            //TODO 撮合失败需要撤回订单
         }
 
     }

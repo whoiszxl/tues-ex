@@ -49,6 +49,7 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       # 值的反序列化方式
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      group-id: default-group
     listener:
       # 在侦听器容器中运行的线程数。
       concurrency: 5

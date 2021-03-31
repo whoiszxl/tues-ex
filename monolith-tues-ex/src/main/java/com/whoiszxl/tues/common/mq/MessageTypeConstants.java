@@ -16,4 +16,10 @@ public class MessageTypeConstants {
 
     /** 关闭撮合引擎 */
     public static final String SHUTDOWN_ENGINE = "SHUTDOWN_ENGINE";
+
+    /** 订单撮合成功处理 */
+    public static final String HANDLE_ORDER_SUCCESS = "HANDLE_ORDER_SUCCESS";
+
+    /** 撮合成交详情成功处理 */
+    public static final String HANDLE_DEAL_SUCCESS = "HANDLE_DEAL_SUCCESS";
 }

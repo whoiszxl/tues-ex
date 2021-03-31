@@ -13,6 +13,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.kafka.core.KafkaTemplate;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -84,7 +85,7 @@ public class MemoryOrderBook implements OrderBook {
 
         //4. 进行预撮合
         BigDecimal matchCount = BigDecimal.ZERO;
-        if(ObjectUtils.isNotEmpty(otherBuckets.size())) {
+        if(ObjectUtils.isNotEmpty(otherBuckets)) {
             matchCount = preMatch(targetOrder, otherBuckets);
         }
 
@@ -101,10 +102,10 @@ public class MemoryOrderBook implements OrderBook {
             var.setPrice(p);
             return var;
         });
-
+        targetOrder.setAddTime(LocalDateTime.now());
         orderBucket.addOrder(targetOrder);
         orderIdMap.put(targetOrder.getOrderId(), targetOrder);
-        return null;
+        return Result.buildSuccess();
     }
 
     private Result checkOrderParams(ExOrder targetOrder) {
@@ -210,10 +211,10 @@ public class MemoryOrderBook implements OrderBook {
             for(int i = 0; i < handleSize; i = i + maxSize) {
                 int length = (handleSize - i) > maxSize ? maxSize : handleSize - i;
                 List<ExDeal> subList = allDealList.subList(i, i + length);
-                kafkaTemplate.send(MessageTypeConstants.HANDLE_ORDER_SUCCESS, JsonUtil.toJson(subList));
+                kafkaTemplate.send(MessageTypeConstants.HANDLE_DEAL_SUCCESS, JsonUtil.toJson(subList));
             }
         }else {
-            kafkaTemplate.send(MessageTypeConstants.HANDLE_ORDER_SUCCESS, JsonUtil.toJson(allDealList));
+            kafkaTemplate.send(MessageTypeConstants.HANDLE_DEAL_SUCCESS, JsonUtil.toJson(allDealList));
         }
     }
 

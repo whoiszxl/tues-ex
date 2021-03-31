@@ -4,12 +4,8 @@ import com.whoiszxl.tues.common.bean.AbstractObject;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
  * 撮合挂单消息DTO实体
@@ -19,11 +15,14 @@ public class OrderMessageDTO extends AbstractObject implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "主键ID")
-    private Long id;
+    @ApiModelProperty(value = "订单ID")
+    private Long orderId;
 
     @ApiModelProperty(value = "用户ID")
     private Long memberId;
+
+    @ApiModelProperty(value = "交易对名称")
+    private String pairName;
 
     @ApiModelProperty(value = "交易对第一个币种ID")
     private Integer coinId;

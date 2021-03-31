@@ -1,11 +1,16 @@
 package com.whoiszxl.orderbook;
 
 import com.whoiszxl.constants.BuySellEnum;
+import com.whoiszxl.constants.MessageTypeConstants;
+import com.whoiszxl.entity.BucketMatchResult;
+import com.whoiszxl.entity.ExDeal;
 import com.whoiszxl.entity.ExOrder;
 import com.whoiszxl.entity.Result;
+import com.whoiszxl.utils.JsonUtil;
 import io.netty.util.collection.LongObjectHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.kafka.core.KafkaTemplate;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -30,6 +35,18 @@ public class MemoryOrderBook implements OrderBook {
     private boolean isPause = false;
     /** 是否就绪 */
     private boolean isReady = false;
+
+    private KafkaTemplate<String, String> kafkaTemplate;
+
+    /** 交易对第一个币种的精度 */
+    private Integer firstCoinDecimals;
+
+    /** 交易对第二个币种的精度 */
+    private Integer secondCoinDecimals;
+
+    public MemoryOrderBook(String pairName) {
+        init(pairName);
+    }
 
     void init(String pairName) {
         log.info("开始初始化{}交易对的订单簿", pairName);
@@ -87,8 +104,6 @@ public class MemoryOrderBook implements OrderBook {
 
         orderBucket.addOrder(targetOrder);
         orderIdMap.put(targetOrder.getOrderId(), targetOrder);
-        //8. 将结果发送到队列中进行处理
-
         return null;
     }
 
@@ -108,21 +123,29 @@ public class MemoryOrderBook implements OrderBook {
     /**
      * 预撮合，当一笔订单流转到撮合引擎的时候，先进行一次与对手单的匹配，匹配过后再入订单簿中
      * 这样可以在有完全匹配的订单情况下，避免订单进入订单簿中。
-     * @param exOrder 订单信息
+     * @param targetOrder 订单信息
      * @param otherBuckets 对手单列表
      * @return
      */
-    private BigDecimal preMatch(ExOrder exOrder, NavigableMap<BigDecimal, OrderBucket> otherBuckets) {
+    private BigDecimal preMatch(ExOrder targetOrder, NavigableMap<BigDecimal, OrderBucket> otherBuckets) {
         BigDecimal allCount = BigDecimal.ZERO;
         List<BigDecimal> emptyBuckets = new ArrayList<>();
 
+        List<ExDeal> allDealList = new ArrayList<>();
+        List<ExOrder> allCompletedOrderList = new ArrayList<>();
+
         for (OrderBucket bucket : otherBuckets.values()) {
             //获取到此次循环中需要撮合的量并在当前的订单桶中进行匹配
-            BigDecimal matchCount = exOrder.getCurrentCount().subtract(allCount);
-            BigDecimal alreadyMatch = bucket.match(
+            BigDecimal matchCount = targetOrder.getCurrentCount().subtract(allCount);
+            BucketMatchResult matchResult = bucket.match(
                     matchCount,
-                    exOrder,
+                    targetOrder,
                     otherOrder -> orderIdMap.remove(otherOrder.getOrderId()));
+
+            BigDecimal alreadyMatch = matchResult.getAllMatchCount();
+            allDealList.addAll(matchResult.getDealList());
+            allCompletedOrderList.addAll(matchResult.getOrderList());
+
 
             //将已撮合数量加到当前预撮合的总量中去
             allCount = allCount.add(alreadyMatch);
@@ -133,15 +156,65 @@ public class MemoryOrderBook implements OrderBook {
             }
 
             //如果当前预撮合的总量与此订单的数量一致了，就停止预撮合操作
-            if(allCount.compareTo(exOrder.getCurrentCount()) == 0) {
+            if(allCount.compareTo(targetOrder.getCurrentCount()) == 0) {
                 break;
             }
+        }
+
+        //判断当前订单是否完成了撮合
+        if(targetOrder.getCurrentCount().subtract(allCount).compareTo(BigDecimal.ZERO) == 0) {
+            allCompletedOrderList.add(targetOrder);
         }
 
         //移除空订单桶
         emptyBuckets.forEach(otherBuckets::remove);
 
+        //将结果发送到队列中进行处理
+        if(ObjectUtils.isNotEmpty(allDealList)) {
+            handleDealSuccess(allDealList);
+        }
+        if(ObjectUtils.isNotEmpty(allCompletedOrderList)) {
+            handleOrderSuccess(allCompletedOrderList);
+        }
+
         return allCount;
+    }
+
+    /**
+     * 处理订单撮合成功事件
+     * @param allCompletedOrderList
+     */
+    private void handleOrderSuccess(List<ExOrder> allCompletedOrderList) {
+        int maxSize = 100;
+        int handleSize = allCompletedOrderList.size();
+        if(handleSize > maxSize) {
+            for(int i = 0; i < handleSize; i = i + maxSize) {
+                int length = (handleSize - i) > maxSize ? maxSize : handleSize - i;
+                List<ExOrder> subList = allCompletedOrderList.subList(i, i + length);
+                kafkaTemplate.send(MessageTypeConstants.HANDLE_ORDER_SUCCESS, JsonUtil.toJson(subList));
+            }
+        }else {
+            kafkaTemplate.send(MessageTypeConstants.HANDLE_ORDER_SUCCESS, JsonUtil.toJson(allCompletedOrderList ));
+        }
+
+    }
+
+    /**
+     * 处理交易成功事件（交易详情）
+     * @param allDealList
+     */
+    private void handleDealSuccess(List<ExDeal> allDealList) {
+        int maxSize = 100;
+        int handleSize = allDealList.size();
+        if(handleSize > maxSize) {
+            for(int i = 0; i < handleSize; i = i + maxSize) {
+                int length = (handleSize - i) > maxSize ? maxSize : handleSize - i;
+                List<ExDeal> subList = allDealList.subList(i, i + length);
+                kafkaTemplate.send(MessageTypeConstants.HANDLE_ORDER_SUCCESS, JsonUtil.toJson(subList));
+            }
+        }else {
+            kafkaTemplate.send(MessageTypeConstants.HANDLE_ORDER_SUCCESS, JsonUtil.toJson(allDealList));
+        }
     }
 
 
@@ -158,5 +231,25 @@ public class MemoryOrderBook implements OrderBook {
     @Override
     public boolean getReady() {
         return isReady;
+    }
+
+    @Override
+    public void setReady(boolean flag) {
+        this.isReady = flag;
+    }
+
+    @Override
+    public void setKafkaTemplate(KafkaTemplate<String, String> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
+
+    @Override
+    public void setFirstCoinDecimals(Integer decimals) {
+        this.firstCoinDecimals = decimals;
+    }
+
+    @Override
+    public void setSecondCoinDecimals(Integer decimals) {
+        this.secondCoinDecimals = decimals;
     }
 }

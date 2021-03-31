@@ -1,12 +1,15 @@
 package com.whoiszxl.orderbook;
 
+import com.whoiszxl.constants.BuySellEnum;
+import com.whoiszxl.entity.BucketMatchResult;
+import com.whoiszxl.entity.ExDeal;
 import com.whoiszxl.entity.ExOrder;
 import lombok.EqualsAndHashCode;
+import org.springframework.data.redis.core.convert.Bucket;
 
 import java.math.BigDecimal;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -67,14 +70,17 @@ public class MemoryOrderBucket implements OrderBucket {
      * 会从卖单桶里吃掉[10,20,30]这三笔单，然后实行（多退少补）原则，退 "(买价-卖价)*量" 元, 则为: (25-20)*60=300元
      *
      * @param matchCount 匹配撮合的量
-     * @param exOrder 交易信息
+     * @param targetOrder 交易信息
      * @param removeOrderCallback 移除订单缓存的回调事件
      * @return
      */
     @Override
-    public BigDecimal match(BigDecimal matchCount, ExOrder exOrder, Consumer<ExOrder> removeOrderCallback) {
+    public BucketMatchResult match(BigDecimal matchCount, ExOrder targetOrder, Consumer<ExOrder> removeOrderCallback) {
         Iterator<Map.Entry<BigDecimal, ExOrder>> iterator = orders.entrySet().iterator();
         BigDecimal allMatchCount = BigDecimal.ZERO;
+
+        List<ExDeal> dealList = new ArrayList<>();
+        List<ExOrder> complatedOtherOrderList = new ArrayList<>();
 
         while(iterator.hasNext() && matchCount.compareTo(BigDecimal.ZERO) > 0) {
             //遍历拿到订单桶中的订单详情
@@ -82,7 +88,7 @@ public class MemoryOrderBucket implements OrderBucket {
             ExOrder otherOrder = next.getValue();
 
             //计算流转过来的订单可以在订单桶中的这笔单中吃多少量
-            BigDecimal tradedCount = matchCount.min(exOrder.getCurrentCount());
+            BigDecimal tradedCount = matchCount.min(targetOrder.getCurrentCount());
             allMatchCount = allMatchCount.add(tradedCount);
 
             //更新可交易数量
@@ -94,16 +100,34 @@ public class MemoryOrderBucket implements OrderBucket {
 
             //获取订单桶中的这笔订单是否已经被全部交易完毕了
             boolean fullMatch = otherOrder.getCurrentCount().compareTo(BigDecimal.ZERO) == 0;
-            //TODO 生成事件
 
+            //生成成交记录
+            ExDeal deal = new ExDeal();
+            deal.setPairName(targetOrder.getPairName());
+            deal.setSuccessCount(tradedCount);
+            deal.setDirection(targetOrder.getDirection());
+            deal.setPrice(otherOrder.getPrice());
+            deal.setCoinId(targetOrder.getCoinId());
+            deal.setReplaceCoinId(targetOrder.getReplaceCoinId());
+            deal.setTime(LocalDateTime.now());
+            if(BuySellEnum.BUY.getValue().equals(targetOrder.getDirection())) {
+                deal.setBuyOrderId(targetOrder.getOrderId());
+                deal.setSellOrderId(otherOrder.getOrderId());
+            }else {
+                deal.setBuyOrderId(otherOrder.getOrderId());
+                deal.setSellOrderId(targetOrder.getOrderId());
+            }
+            dealList.add(deal);
 
             if(fullMatch) {
+                complatedOtherOrderList.add(otherOrder);
+
                 //从订单Id缓存中删除这笔交易并将此迭代的订单从桶中移除
                 removeOrderCallback.accept(otherOrder);
                 iterator.remove();
             }
         }
-        return allMatchCount;
+        return new BucketMatchResult(dealList, complatedOtherOrderList, allMatchCount);
     }
 
 }

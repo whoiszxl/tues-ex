@@ -1,5 +1,6 @@
 package com.whoiszxl.orderbook;
 
+import com.whoiszxl.entity.BucketMatchResult;
 import com.whoiszxl.entity.ExOrder;
 
 import java.math.BigDecimal;
@@ -62,6 +63,6 @@ public interface OrderBucket extends Comparable<OrderBucket> {
      * @param removeOrderCallback 移除订单缓存的回调事件
      * @return
      */
-    BigDecimal match(BigDecimal matchCount, ExOrder exOrder, Consumer<ExOrder> removeOrderCallback);
+    BucketMatchResult match(BigDecimal matchCount, ExOrder exOrder, Consumer<ExOrder> removeOrderCallback);
 
 }

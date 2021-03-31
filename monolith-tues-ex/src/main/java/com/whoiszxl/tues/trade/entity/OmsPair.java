@@ -44,6 +44,12 @@ public class OmsPair extends AbstractObject implements Serializable {
     @ApiModelProperty(value = "交易对第二个币种ID")
     private Integer replaceCoinId;
 
+    @ApiModelProperty(value = "交易对第一个币种精度")
+    private Integer coinDecimals;
+
+    @ApiModelProperty(value = "交易对第二个币种精度")
+    private Integer replaceCoinDecimals;
+
     @ApiModelProperty(value = "购买者所出费率")
     private BigDecimal buyerFee;
 

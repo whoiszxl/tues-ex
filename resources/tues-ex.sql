@@ -352,6 +352,8 @@ CREATE TABLE `oms_pair` (
 	`pair_type` tinyint(2) DEFAULT '1' COMMENT '交易对类型：1:主流币 2:DeFi 3:存储',
 	`coin_id` int(10) NOT NULL COMMENT '交易对第一个币种ID',
 	`replace_coin_id` int(10) NOT NULL COMMENT '交易对第二个币种ID',
+	`coin_decimals` int(2) NOT NULL COMMENT '交易对第一个币种精度',
+	`replace_coin_decimals` int(10) NOT NULL COMMENT '交易对第二个币种精度',
 	`buyer_fee` decimal(40, 18) NOT NULL DEFAULT '0.001' COMMENT '购买者所出费率',
 	`seller_fee` decimal(40, 18) NOT NULL DEFAULT '0.001' COMMENT '出售者所出费率',
 	`max_orders` int(4) NOT NULL COMMENT '最大挂单笔数',

@@ -20,7 +20,7 @@ public interface UmsMemberWalletRepository extends BaseRepository<UmsMemberWalle
             "set lock_balance = lock_balance - ?3, usable_balance = usable_balance + ?3 " +
             "where member_id = ?1 and coin_id = ?2 and lock_balance >= ?3 and status = 1",
             nativeQuery = true)
-    int unfreezeBalance(Long memberId, Integer coinId, BigDecimal amount);
+    int unlockBalance(Long memberId, Integer coinId, BigDecimal amount);
 
     @Modifying
     @Transactional

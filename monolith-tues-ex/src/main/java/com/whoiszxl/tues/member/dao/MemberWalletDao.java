@@ -11,6 +11,16 @@ import java.util.List;
 public interface MemberWalletDao {
 
     /**
+     * 解锁余额
+     * 加可用余额，减锁定余额
+     * @param memberId 用户ID
+     * @param coinId 币种ID
+     * @param amount 金额
+     * @return
+     */
+    int unlockBalance(Long memberId, Integer coinId, BigDecimal amount);
+
+    /**
      * 减可用余额 加锁定余额
      * @param memberId 用户ID
      * @param coinId 币种ID

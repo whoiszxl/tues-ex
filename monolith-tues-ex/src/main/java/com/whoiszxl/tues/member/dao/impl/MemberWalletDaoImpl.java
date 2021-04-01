@@ -16,6 +16,11 @@ public class MemberWalletDaoImpl implements MemberWalletDao {
     private UmsMemberWalletRepository umsMemberWalletRepository;
 
     @Override
+    public int unlockBalance(Long memberId, Integer coinId, BigDecimal amount) {
+        return umsMemberWalletRepository.unlockBalance(memberId, coinId, amount);
+    }
+
+    @Override
     public int lockBalance(Long memberId, Integer coinId, BigDecimal amount) {
         return umsMemberWalletRepository.lockBalance(memberId, coinId, amount);
     }

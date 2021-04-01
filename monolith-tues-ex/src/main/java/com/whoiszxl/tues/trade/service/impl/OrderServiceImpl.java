@@ -217,8 +217,7 @@ public class OrderServiceImpl implements OrderService {
         //将此笔订单冻结的金额减去实际成交额
         BigDecimal refundBalance = freezeBalance.subtract(actualBalance);
         if(refundBalance.compareTo(BigDecimal.ZERO) > 0) {
-            memberWalletDao.addBalance()
+            memberWalletDao.unlockBalance(order.getMemberId(), order.getCoinId(), refundBalance);
         }
-
     }
 }

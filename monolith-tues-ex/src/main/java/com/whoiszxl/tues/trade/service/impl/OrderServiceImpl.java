@@ -212,12 +212,11 @@ public class OrderServiceImpl implements OrderService {
 
         // BTC/USDT 拿到需要操作的币种ID，如果是买，则操作USDT, 卖则操作BTC
         Integer coinId = order.getDirection().equals(BuySellEnum.SELL.getValue()) ? order.getCoinId() : order.getReplaceCoinId();
-        UmsMemberWallet memberWallet = memberWalletDao.findByMemberIdAndCoinId(order.getMemberId(), coinId);
 
         //将此笔订单冻结的金额减去实际成交额
         BigDecimal refundBalance = freezeBalance.subtract(actualBalance);
         if(refundBalance.compareTo(BigDecimal.ZERO) > 0) {
-            memberWalletDao.unlockBalance(order.getMemberId(), order.getCoinId(), refundBalance);
+            memberWalletDao.unlockBalance(order.getMemberId(), coinId, refundBalance);
         }
     }
 }

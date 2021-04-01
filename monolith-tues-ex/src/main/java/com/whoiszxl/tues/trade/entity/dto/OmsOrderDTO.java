@@ -4,9 +4,7 @@ import com.whoiszxl.tues.common.bean.AbstractObject;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -49,6 +47,12 @@ public class OmsOrderDTO extends AbstractObject implements Serializable {
     @ApiModelProperty(value = "当前可交易数量（挂单的金额可能超过当前所有挂单的总和）")
     private BigDecimal currentCount;
 
+    @ApiModelProperty(value = "当前成交额(每一笔的成交量*成交金额累加数)")
+    private BigDecimal turnover;
+
+    @ApiModelProperty(value = "成交量")
+    private BigDecimal volume;
+
     @ApiModelProperty(value = "买卖方向 1：买入 -1：卖出")
     private Integer direction;
 
@@ -57,6 +61,9 @@ public class OmsOrderDTO extends AbstractObject implements Serializable {
 
     @ApiModelProperty(value = "0代表部分交易，可交易，1是所有已成交，交易结束， -1用户撤单")
     private Integer status;
+
+    @ApiModelProperty(value = "完成交易时间")
+    private LocalDateTime completedAt;
 
     @ApiModelProperty(value = "创建时间,挂单时间")
     private LocalDateTime createdAt;

@@ -374,6 +374,7 @@ CREATE TABLE `oms_order` (
 	`price` decimal(40, 18) NOT NULL DEFAULT '0.0000' COMMENT '委托价格',
 	`total_count` decimal(40, 18) NOT NULL DEFAULT '0.0000' COMMENT '委托总数量',
 	`current_count` decimal(40, 18) NOT NULL DEFAULT '0.0000' COMMENT '当前可交易数量（挂单的金额可能超过当前所有挂单的总和）',
+	`turnover` decimal(40, 18) NOT NULL DEFAULT '0.0000' COMMENT '当前成交额(每一笔的成交量*成交金额累加数)',
 	`direction` tinyint(2) NOT NULL DEFAULT '1' COMMENT '买卖方向 1：买入 -1：卖出',
 	`type` tinyint(2) NOT NULL DEFAULT '1' COMMENT '挂单类型 1：限价 2：市价',
 	`status` tinyint(2) NOT NULL DEFAULT '0' COMMENT '0代表部分交易，可交易，1是所有已成交，交易结束， -1用户撤单',

@@ -75,6 +75,7 @@ public class MemoryOrderBook implements OrderBook {
         if(orderIdMap.containsKey(targetOrder.getOrderId())) {
             return Result.buildError(targetOrder.getOrderId() + "为重复订单");
         }
+        targetOrder.setAddTime(LocalDateTime.now());
 
         //2. 获取到当前订单交易方向的对手单
         NavigableMap<BigDecimal, OrderBucket> otherBuckets = BuySellEnum.BUY.getValue().equals(targetOrder.getDirection()) ?
@@ -102,7 +103,6 @@ public class MemoryOrderBook implements OrderBook {
             var.setPrice(p);
             return var;
         });
-        targetOrder.setAddTime(LocalDateTime.now());
         orderBucket.addOrder(targetOrder);
         orderIdMap.put(targetOrder.getOrderId(), targetOrder);
         return Result.buildSuccess();
@@ -158,6 +158,7 @@ public class MemoryOrderBook implements OrderBook {
 
             //如果当前预撮合的总量与此订单的数量一致了，就停止预撮合操作
             if(allCount.compareTo(targetOrder.getCurrentCount()) == 0) {
+                targetOrder.setComplatedTime(LocalDateTime.now());
                 break;
             }
         }

@@ -101,6 +101,17 @@ public class MemoryOrderBucket implements OrderBucket {
             //获取订单桶中的这笔订单是否已经被全部交易完毕了
             boolean fullMatch = otherOrder.getCurrentCount().compareTo(BigDecimal.ZERO) == 0;
 
+            //获取成交价
+            BigDecimal tradedPrice = targetOrder.getPrice().min(otherOrder.getPrice());
+
+            //更新成交额
+            //成交数量乘以被撮合单的价格
+            BigDecimal turnover = tradedCount.multiply(tradedPrice);
+            targetOrder.setTurnover(targetOrder.getTurnover().add(turnover));
+            otherOrder.setTurnover(otherOrder.getTurnover().add(turnover));
+            targetOrder.setVolume(targetOrder.getVolume().add(tradedCount));
+            otherOrder.setVolume(otherOrder.getVolume().add(tradedCount));
+
             //生成成交记录
             ExDeal deal = new ExDeal();
             deal.setPairName(targetOrder.getPairName());

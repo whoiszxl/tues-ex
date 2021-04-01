@@ -57,4 +57,18 @@ public interface OmsOrderDao {
      * @return
      */
     List<OmsOrder> findAllByMemberIdOrderByIdDesc(Long memberId);
+
+
+    /**
+     * 通过订单ID查询订单
+     * @param id 订单ID
+     * @return
+     */
+    OmsOrder findById(Long id);
+
+    /**
+     * 更新订单信息
+     * @param order 订单信息
+     */
+    OmsOrder updateOrder(OmsOrder order);
 }

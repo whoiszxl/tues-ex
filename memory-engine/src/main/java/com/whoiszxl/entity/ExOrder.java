@@ -2,6 +2,7 @@ package com.whoiszxl.entity;
 
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -38,6 +39,12 @@ public class ExOrder implements Serializable {
 
     /** 当前可交易数量 */
     private BigDecimal currentCount;
+
+    /** 当前成交额(每一笔的成交量*成交金额累加数) */
+    private BigDecimal turnover;
+
+    /** 成交量 */
+    private BigDecimal volume;
 
     /** 挂单时间 */
     private LocalDateTime addTime;

@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * 撮合挂单消息DTO实体
@@ -39,6 +40,12 @@ public class OrderMessageDTO extends AbstractObject implements Serializable {
     @ApiModelProperty(value = "当前可交易数量（挂单的金额可能超过当前所有挂单的总和）")
     private BigDecimal currentCount;
 
+    @ApiModelProperty(value = "当前成交额(每一笔的成交量*成交金额累加数)")
+    private BigDecimal turnover;
+
+    @ApiModelProperty(value = "成交量")
+    private BigDecimal volume;
+
     @ApiModelProperty(value = "买卖方向 1：买入 -1：卖出")
     private Integer direction;
 
@@ -50,5 +57,14 @@ public class OrderMessageDTO extends AbstractObject implements Serializable {
 
     @ApiModelProperty(value = "消息类型")
     private String messageType;
+
+    @ApiModelProperty(value = "挂单时间")
+    private LocalDateTime addTime;
+    
+    @ApiModelProperty(value = "完成撮合时间")
+    private LocalDateTime complatedTime;
+    
+    @ApiModelProperty(value = "取消挂单时间")
+    private LocalDateTime canceledTime;
 
 }

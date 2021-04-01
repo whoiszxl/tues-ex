@@ -4,6 +4,7 @@ import com.whoiszxl.tues.trade.entity.dto.OmsDealDTO;
 import com.whoiszxl.tues.trade.entity.dto.OmsOrderDTO;
 import com.whoiszxl.tues.trade.entity.param.OrderParam;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -35,4 +36,12 @@ public interface OrderService {
      * @return
      */
     List<OmsDealDTO> listDeal(Long memberId, Long orderId);
+
+    /**
+     * 处理订单成功撮合事件
+     * @param orderId 订单ID
+     * @param volume 交易总量
+     * @param turnover 交易额
+     */
+    void handleOrderSuccess(Long orderId, BigDecimal volume, BigDecimal turnover);
 }

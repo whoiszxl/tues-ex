@@ -45,4 +45,14 @@ public class OmsOrderDaoImpl implements OmsOrderDao {
     public List<OmsOrder> findAllByMemberIdOrderByIdDesc(Long memberId) {
         return omsOrderRepository.findAllByMemberIdOrderByIdDesc(memberId);
     }
+
+    @Override
+    public OmsOrder findById(Long id) {
+        return omsOrderRepository.findById(id).get();
+    }
+
+    @Override
+    public OmsOrder updateOrder(OmsOrder order) {
+        return omsOrderRepository.saveAndFlush(order);
+    }
 }

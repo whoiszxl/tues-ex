@@ -24,6 +24,7 @@ import com.whoiszxl.tues.trade.entity.param.OrderParam;
 import com.whoiszxl.tues.trade.service.MatchService;
 import com.whoiszxl.tues.trade.service.OrderService;
 import com.whoiszxl.tues.trade.service.PairService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,7 @@ import java.util.Optional;
  * @author zhouxiaolong
  * @date 2021/3/26
  */
+@Slf4j
 @Service
 public class OrderServiceImpl implements OrderService {
 
@@ -163,5 +165,60 @@ public class OrderServiceImpl implements OrderService {
                 || memberWallet.getUsableBalance().compareTo(orderBalance) < 0) {
             ExceptionCatcher.catchValidateEx(Result.buildError("余额不足"));
         }
+    }
+
+    @Override
+    public void handleOrderSuccess(Long orderId, BigDecimal volume, BigDecimal turnover) {
+        //订单交易成功状态更新
+        OmsOrder order = orderDao.findById(orderId);
+        if(!OrderStatusEnum.TRADE_OPEN.getValue().equals(order.getStatus())) {
+            return;
+        }
+        order.setTurnover(turnover);
+        order.setCurrentCount(BigDecimal.ZERO);
+        order.setStatus(OrderStatusEnum.TRADE_CLOSE.getValue());
+        order.setCompletedAt(dateProvider.now());
+        order.setUpdatedAt(dateProvider.now());
+        orderDao.updateOrder(order);
+
+
+        refundBalance(order, volume, turnover);
+
+
+    }
+
+
+    /**
+     * -- 退差额 多退少补 --
+     * 假设当前有两个卖单桶：
+     * 卖单桶one -> 卖价20元 -> 单数5单,数量分别为：[10,20,30,40,50]
+     * 卖单桶two -> 卖价30元 -> 单数5单,数量分别为：[1,2,3,4,5]
+     * 我发起一个买单，买价25元，买60的量，那么这笔买单就会去卖单桶one里进行匹配。(价格优先，时间优先原则)
+     * 会从卖单桶里吃掉[10,20,30]这三笔单，然后实行（多退少补）原则，退 "(买价-卖价)*量" 元, 则为: (25-20)*60=300元
+     * @param order 订单信息
+     * @param volume 总量
+     * @param turnover 总额
+     **/
+    private void refundBalance(OmsOrder order, BigDecimal volume, BigDecimal turnover) {
+        BigDecimal actualBalance, freezeBalance;
+        //如果是买单，冻结的数量则是当前单的委托总数*委托价格，实际数量则是撮合返回的交易总额
+        if(order.getDirection().equals(BuySellEnum.BUY.getValue())) {
+            freezeBalance = order.getTotalCount().multiply(order.getPrice());
+            actualBalance = turnover;
+        }else {
+            freezeBalance = order.getTotalCount();
+            actualBalance = volume;
+        }
+
+        // BTC/USDT 拿到需要操作的币种ID，如果是买，则操作USDT, 卖则操作BTC
+        Integer coinId = order.getDirection().equals(BuySellEnum.SELL.getValue()) ? order.getCoinId() : order.getReplaceCoinId();
+        UmsMemberWallet memberWallet = memberWalletDao.findByMemberIdAndCoinId(order.getMemberId(), coinId);
+
+        //将此笔订单冻结的金额减去实际成交额
+        BigDecimal refundBalance = freezeBalance.subtract(actualBalance);
+        if(refundBalance.compareTo(BigDecimal.ZERO) > 0) {
+            memberWalletDao.addBalance()
+        }
+
     }
 }

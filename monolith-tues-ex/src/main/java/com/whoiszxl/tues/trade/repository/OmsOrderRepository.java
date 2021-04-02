@@ -64,4 +64,12 @@ public interface OmsOrderRepository extends BaseRepository<OmsOrder> {
      * @return
      */
     List<OmsOrder> findAllByMemberIdOrderByIdDesc(Long memberId);
+
+    /**
+     * 通过订单ID和会员ID查找用户订单
+     * @param id 订单ID
+     * @param memberId 用户ID
+     * @return
+     */
+    OmsOrder findByIdAndMemberId(Long id, Long memberId);
 }

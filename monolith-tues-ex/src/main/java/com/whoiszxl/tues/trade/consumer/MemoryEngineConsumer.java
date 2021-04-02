@@ -50,7 +50,6 @@ public class MemoryEngineConsumer {
 
     }
 
-控制
     @KafkaListener(topics = MessageTypeConstants.HANDLE_DEAL_SUCCESS, groupId = "default-group")
     public void handleDealSuccess(ConsumerRecord<String, String> record, Consumer consumer) {
         try{

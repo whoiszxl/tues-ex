@@ -55,4 +55,9 @@ public class OmsOrderDaoImpl implements OmsOrderDao {
     public OmsOrder updateOrder(OmsOrder order) {
         return omsOrderRepository.saveAndFlush(order);
     }
+
+    @Override
+    public OmsOrder findByIdAndMemberId(Long id, Long memberId) {
+        return omsOrderRepository.findByIdAndMemberId(id, memberId);
+    }
 }

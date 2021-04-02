@@ -1,7 +1,8 @@
 package com.whoiszxl.tues.trade.service;
 
+import com.whoiszxl.tues.common.bean.Result;
 import com.whoiszxl.tues.trade.entity.OmsDeal;
-import com.whoiszxl.tues.trade.entity.dto.OmsDealDTO;
+import com.whoiszxl.tues.trade.entity.OmsOrder;
 import com.whoiszxl.tues.trade.entity.dto.OmsOrderDTO;
 import com.whoiszxl.tues.trade.entity.param.OrderParam;
 
@@ -43,4 +44,20 @@ public interface OrderService {
      * @param omsDeal 订单详情信息
      */
     void handleDealSuccess(OmsDeal omsDeal);
+
+    /**
+     * 通过订单ID和会员ID查找用户订单
+     * @param id 订单ID
+     * @param memberId 用户ID
+     * @return
+     */
+    OmsOrderDTO findByIdAndMemberId(Long id, Long memberId);
+
+    /**
+     * 取消订单
+     * @param orderId 订单ID
+     * @param memberId 用户ID
+     * @return
+     */
+    Result cancelOrder(Long orderId, Long memberId);
 }

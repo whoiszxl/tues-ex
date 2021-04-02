@@ -1,7 +1,6 @@
 package com.whoiszxl.tues.trade.dao;
 
 import com.whoiszxl.tues.trade.entity.OmsOrder;
-import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -71,4 +70,12 @@ public interface OmsOrderDao {
      * @param order 订单信息
      */
     OmsOrder updateOrder(OmsOrder order);
+
+    /**
+     * 通过订单ID和会员ID查找用户订单
+     * @param id 订单ID
+     * @param memberId 用户ID
+     * @return
+     */
+    OmsOrder findByIdAndMemberId(Long id, Long memberId);
 }

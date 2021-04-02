@@ -4,12 +4,14 @@ import com.whoiszxl.tues.common.bean.Result;
 import com.whoiszxl.tues.common.utils.BeanCopierUtils;
 import com.whoiszxl.tues.common.utils.JwtUtils;
 import com.whoiszxl.tues.trade.entity.dto.OmsOrderDTO;
+import com.whoiszxl.tues.trade.entity.param.CancelOrderParam;
 import com.whoiszxl.tues.trade.entity.param.OrderParam;
 import com.whoiszxl.tues.trade.entity.vo.OmsOrderVO;
 import com.whoiszxl.tues.trade.service.OrderService;
 import io.jsonwebtoken.Claims;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +43,14 @@ public class OrderController {
         Long memberId = Long.parseLong(memberClaims.getId());
         orderParam.setMemberId(memberId);
         return orderService.add(orderParam) ? Result.buildSuccess() : Result.buildError();
+    }
+
+    @PostMapping("/cancel")
+    @ApiOperation(value = "撤单", notes = "撤销订单", response = Result.class)
+    public Result cancelOrder(@RequestBody CancelOrderParam cancelOrderParam) {
+        Claims memberClaims = JwtUtils.getUserClaims(request);
+        Long memberId = Long.parseLong(memberClaims.getId());
+        return orderService.cancelOrder(cancelOrderParam.getOrderId(), memberId);
     }
 
     @PostMapping("/list")

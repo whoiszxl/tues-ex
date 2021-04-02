@@ -7,9 +7,12 @@ import com.whoiszxl.tues.common.enums.OrderTypeEnum;
 import com.whoiszxl.tues.common.enums.SwitchStatusEnum;
 import com.whoiszxl.tues.common.exception.ExceptionCatcher;
 import com.whoiszxl.tues.common.mq.MessageTypeConstants;
+import com.whoiszxl.tues.common.mq.MqEnum;
+import com.whoiszxl.tues.common.mq.MqSenderFactory;
 import com.whoiszxl.tues.common.utils.BeanCopierUtils;
 import com.whoiszxl.tues.common.utils.DateProvider;
 import com.whoiszxl.tues.common.utils.IdWorker;
+import com.whoiszxl.tues.common.utils.JsonUtil;
 import com.whoiszxl.tues.member.dao.MemberWalletDao;
 import com.whoiszxl.tues.member.entity.UmsMemberWallet;
 import com.whoiszxl.tues.member.service.MemberWalletService;
@@ -18,7 +21,6 @@ import com.whoiszxl.tues.trade.dao.OmsOrderDetailDao;
 import com.whoiszxl.tues.trade.entity.OmsDeal;
 import com.whoiszxl.tues.trade.entity.OmsOrder;
 import com.whoiszxl.tues.trade.entity.OmsOrderDetail;
-import com.whoiszxl.tues.trade.entity.dto.OmsDealDTO;
 import com.whoiszxl.tues.trade.entity.dto.OmsOrderDTO;
 import com.whoiszxl.tues.trade.entity.dto.OmsPairDTO;
 import com.whoiszxl.tues.trade.entity.dto.OrderParamCheckDTO;
@@ -27,6 +29,7 @@ import com.whoiszxl.tues.trade.service.MatchService;
 import com.whoiszxl.tues.trade.service.OrderService;
 import com.whoiszxl.tues.trade.service.PairService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,6 +65,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private MatchService matchService;
+
+    @Autowired
+    private MqSenderFactory senderFactory;
 
     @Autowired
     private DateProvider dateProvider;
@@ -308,5 +314,21 @@ public class OrderServiceImpl implements OrderService {
                 turnover : deal.getSuccessCount();
 
         memberWalletDao.subLockBalance(order.getMemberId(), lockCoinId, lockBalance);
+    }
+
+    @Override
+    public OmsOrderDTO findByIdAndMemberId(Long id, Long memberId) {
+        OmsOrder order = orderDao.findByIdAndMemberId(id, memberId);
+        return order == null ? null : order.clone(OmsOrderDTO.class);
+    }
+
+    @Override
+    public Result cancelOrder(Long orderId, Long memberId) {
+        OmsOrderDTO order = findByIdAndMemberId(orderId, memberId);
+        if(ObjectUtils.isEmpty(order)) {
+            return Result.buildError("订单不存在");
+        }
+        senderFactory.get(MqEnum.KAFKA).send(MessageTypeConstants.CANCEL_ORDER, JsonUtil.toJson(order));
+        return Result.buildSuccess();
     }
 }

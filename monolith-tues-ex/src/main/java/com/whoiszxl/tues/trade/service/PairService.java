@@ -1,5 +1,6 @@
 package com.whoiszxl.tues.trade.service;
 
+import com.whoiszxl.tues.trade.entity.OmsPair;
 import com.whoiszxl.tues.trade.entity.dto.OmsPairDTO;
 
 import java.util.List;
@@ -15,4 +16,10 @@ public interface PairService {
      */
     List<OmsPairDTO> pairList();
 
+    /**
+     * 通过交易对名获取交易对信息
+     * @param pairName 交易对名称
+     * @return
+     */
+    OmsPairDTO getPairByName(String pairName);
 }

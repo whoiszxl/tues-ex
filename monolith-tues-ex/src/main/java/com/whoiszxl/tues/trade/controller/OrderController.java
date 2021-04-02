@@ -3,11 +3,8 @@ package com.whoiszxl.tues.trade.controller;
 import com.whoiszxl.tues.common.bean.Result;
 import com.whoiszxl.tues.common.utils.BeanCopierUtils;
 import com.whoiszxl.tues.common.utils.JwtUtils;
-import com.whoiszxl.tues.trade.entity.dto.OmsDealDTO;
 import com.whoiszxl.tues.trade.entity.dto.OmsOrderDTO;
-import com.whoiszxl.tues.trade.entity.param.DealListParam;
 import com.whoiszxl.tues.trade.entity.param.OrderParam;
-import com.whoiszxl.tues.trade.entity.vo.OmsDealVO;
 import com.whoiszxl.tues.trade.entity.vo.OmsOrderVO;
 import com.whoiszxl.tues.trade.service.OrderService;
 import io.jsonwebtoken.Claims;
@@ -17,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -57,18 +53,5 @@ public class OrderController {
         List<OmsOrderVO> orderVOList = BeanCopierUtils.copyListProperties(orderDTOList, OmsOrderVO::new);
         return Result.buildSuccess(orderVOList);
     }
-
-    @PostMapping("/deal/list")
-    @ApiOperation(value = "查看挂单成交列表", notes = "查看挂单成交列表", response = OmsDealVO.class)
-    public Result<List<OmsDealVO>> listDeal(@RequestBody @Valid DealListParam params) {
-        Claims memberClaims = JwtUtils.getUserClaims(request);
-        Long memberId = Long.parseLong(memberClaims.getId());
-
-        List<OmsDealDTO> orderDTOList = orderService.listDeal(memberId, params.getOrderId());
-        List<OmsDealVO> orderVOList = BeanCopierUtils.copyListProperties(orderDTOList, OmsDealVO::new);
-        return Result.buildSuccess(orderVOList);
-    }
-
-
 
 }

@@ -3,6 +3,7 @@ package com.whoiszxl.tues.trade.consumer;
 import com.google.gson.reflect.TypeToken;
 import com.whoiszxl.tues.common.mq.MessageTypeConstants;
 import com.whoiszxl.tues.common.utils.JsonUtil;
+import com.whoiszxl.tues.trade.entity.OmsDeal;
 import com.whoiszxl.tues.trade.entity.dto.OrderMessageDTO;
 import com.whoiszxl.tues.trade.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
@@ -10,9 +11,6 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.support.Acknowledgment;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -52,11 +50,21 @@ public class MemoryEngineConsumer {
 
     }
 
-
+控制
     @KafkaListener(topics = MessageTypeConstants.HANDLE_DEAL_SUCCESS, groupId = "default-group")
-    public void handleDealSuccess(List<ConsumerRecord<String, String>> record,
-                                  Consumer consumer) {
+    public void handleDealSuccess(ConsumerRecord<String, String> record, Consumer consumer) {
+        try{
+            List<OmsDeal> dealList = JsonUtil.fromJsonToList(record.value(),
+                    new TypeToken<List<OmsDeal>>() {
+                    }.getType());
 
+            for (OmsDeal omsDeal : dealList) {
+                orderService.handleDealSuccess(omsDeal);
+            }
+            consumer.commitSync();
+        }catch(Exception e) {
+            log.error("handleOrderSuccess处理订单成功撮合消息失败", e);
+        }
     }
 
 

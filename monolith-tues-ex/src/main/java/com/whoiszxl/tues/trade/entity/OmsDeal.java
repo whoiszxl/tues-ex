@@ -22,18 +22,30 @@ import java.time.LocalDateTime;
  * @since 2021-03-17
  */
 @Data
-@Table(name = "oms_deal")
-@Entity
+//@Table(name = "oms_deal")
+//@Entity
 public class OmsDeal extends AbstractObject implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
+    //@Id
     @ApiModelProperty(value = "主键ID")
     private Long id;
 
+    @ApiModelProperty(value = "交易对名称")
+    private String pairName;
+
     @ApiModelProperty(value = "买家用户ID")
-    private Long memberId;
+    private Long buyOrderId;
+
+    @ApiModelProperty(value = "卖家用户ID")
+    private Long sellOrderId;
+
+    @ApiModelProperty(value = "买量")
+    private BigDecimal buyTurnover;
+
+    @ApiModelProperty(value = "卖量")
+    private BigDecimal sellTurnover;
 
     @ApiModelProperty(value = "挂单ID")
     private Long orderId;
@@ -50,8 +62,8 @@ public class OmsDeal extends AbstractObject implements Serializable {
     @ApiModelProperty(value = "委托总数量")
     private BigDecimal successCount;
 
-    @ApiModelProperty(value = "0：买入 1：卖出")
-    private Integer type;
+    @ApiModelProperty(value = "1：买入 -1：卖出")
+    private Integer direction;
 
     @ApiModelProperty(value = "创建时间,成交时间")
     private LocalDateTime createdAt;

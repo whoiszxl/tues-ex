@@ -1,5 +1,6 @@
 package com.whoiszxl.tues.trade.service;
 
+import com.whoiszxl.tues.trade.entity.OmsDeal;
 import com.whoiszxl.tues.trade.entity.dto.OmsDealDTO;
 import com.whoiszxl.tues.trade.entity.dto.OmsOrderDTO;
 import com.whoiszxl.tues.trade.entity.param.OrderParam;
@@ -30,18 +31,16 @@ public interface OrderService {
     List<OmsOrderDTO> listOrder(Long memberId);
 
     /**
-     * 查看已成交详情列表
-     * @param memberId 用户ID
-     * @param orderId 挂单ID
-     * @return
-     */
-    List<OmsDealDTO> listDeal(Long memberId, Long orderId);
-
-    /**
      * 处理订单成功撮合事件
      * @param orderId 订单ID
      * @param volume 交易总量
      * @param turnover 交易额
      */
     void handleOrderSuccess(Long orderId, BigDecimal volume, BigDecimal turnover);
+
+    /**
+     * 处理订单详情处理事件
+     * @param omsDeal 订单详情信息
+     */
+    void handleDealSuccess(OmsDeal omsDeal);
 }

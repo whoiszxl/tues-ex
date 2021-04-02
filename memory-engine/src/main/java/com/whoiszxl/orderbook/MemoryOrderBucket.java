@@ -5,7 +5,6 @@ import com.whoiszxl.entity.BucketMatchResult;
 import com.whoiszxl.entity.ExDeal;
 import com.whoiszxl.entity.ExOrder;
 import lombok.EqualsAndHashCode;
-import org.springframework.data.redis.core.convert.Bucket;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -120,7 +119,10 @@ public class MemoryOrderBucket implements OrderBucket {
             deal.setPrice(otherOrder.getPrice());
             deal.setCoinId(targetOrder.getCoinId());
             deal.setReplaceCoinId(targetOrder.getReplaceCoinId());
-            deal.setTime(LocalDateTime.now());
+            deal.setBuyTurnover(turnover);
+            deal.setSellTurnover(turnover);
+
+            deal.setCreatedAt(LocalDateTime.now());
             if(BuySellEnum.BUY.getValue().equals(targetOrder.getDirection())) {
                 deal.setBuyOrderId(targetOrder.getOrderId());
                 deal.setSellOrderId(otherOrder.getOrderId());

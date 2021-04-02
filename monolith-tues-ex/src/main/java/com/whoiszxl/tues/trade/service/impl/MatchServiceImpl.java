@@ -7,7 +7,6 @@ import com.whoiszxl.tues.common.utils.DateProvider;
 import com.whoiszxl.tues.common.utils.IdWorker;
 import com.whoiszxl.tues.member.dao.MemberWalletDao;
 import com.whoiszxl.tues.member.entity.UmsMemberWallet;
-import com.whoiszxl.tues.trade.dao.OmsDealDao;
 import com.whoiszxl.tues.trade.dao.OmsOrderDao;
 import com.whoiszxl.tues.trade.entity.OmsDeal;
 import com.whoiszxl.tues.trade.entity.OmsOrder;
@@ -29,9 +28,6 @@ public class MatchServiceImpl implements MatchService {
 
     @Autowired
     private OmsOrderDao orderDao;
-
-    @Autowired
-    private OmsDealDao dealDao;
 
     @Autowired
     private MemberWalletDao memberWalletDao;
@@ -115,17 +111,17 @@ public class MatchServiceImpl implements MatchService {
         //2. 新增成交订单数据
         OmsDeal omsDeal = new OmsDeal();
         omsDeal.setId(idWorker.nextId());
-        omsDeal.setMemberId(rowData.getMemberId());
+        //omsDeal.setMemberId(rowData.getMemberId());
         omsDeal.setOrderId(rowData.getId());
         omsDeal.setCoinId(rowData.getCoinId());
         omsDeal.setReplaceCoinId(rowData.getReplaceCoinId());
         omsDeal.setPrice(rowData.getPrice());
-        omsDeal.setType(rowData.getDirection());
+        omsDeal.setDirection(rowData.getDirection());
         omsDeal.setSuccessCount(orderCount);
         omsDeal.setCreatedAt(dateProvider.now());
         omsDeal.setUpdatedAt(dateProvider.now());
 
-        dealDao.save(omsDeal);
+        //dealDao.save(omsDeal);
 
         //3. 增加买入余额的数量
         Integer addCoinId;

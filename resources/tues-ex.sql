@@ -385,16 +385,35 @@ CREATE TABLE `oms_order` (
 	PRIMARY KEY (`id`)
 ) ENGINE = InnoDB CHARSET = utf8mb4 COMMENT '委托挂单表';
 
+DROP TABLE IF EXISTS `oms_order_detail`;
+CREATE TABLE `oms_order_detail` (
+	`id` bigint(20) NOT NULL COMMENT '主键ID',
+	`order_id` bigint(20) NOT NULL COMMENT '关联的订单ID',
+	`price` decimal(40, 18) NOT NULL COMMENT '交易价格',
+	`volume` decimal(40, 18) NOT NULL DEFAULT '0.0000' COMMENT '交易量',
+	`turnover` decimal(40, 18) NOT NULL DEFAULT '0.0000' COMMENT '交易额',
+	`fee` decimal(40, 18) NOT NULL DEFAULT '0.0000' COMMENT '手续费',
+	`completed_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '成交时间',
+	`created_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+	`updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+	PRIMARY KEY (`id`)
+) ENGINE = InnoDB CHARSET = utf8mb4 COMMENT '委托挂单详情表';
+
+
 DROP TABLE IF EXISTS `oms_deal`;
 CREATE TABLE `oms_deal` (
 	`id` bigint(20) NOT NULL COMMENT '订单主键ID',
-	`member_id` bigint(20) NOT NULL COMMENT '买家用户ID',
-	`order_id` varchar(20) NOT NULL COMMENT '挂单ID',
+	`pair_name` varchar(20) NOT NULL COMMENT '交易对名称',
+	`buy_order_id` bigint(20) NOT NULL COMMENT '买方订单ID',
+	`sell_order_id` bigint(20) NOT NULL COMMENT '卖方订单ID',
+	`buy_turnover` decimal(40, 18) NOT NULL DEFAULT '0.0000' COMMENT '买方总额',
+	`sell_turnover` decimal(40, 18) NOT NULL DEFAULT '0.0000' COMMENT '卖方总额',
+	`order_id` bigint(20) NOT NULL COMMENT '买方订单ID',
 	`coin_id` int(10) NOT NULL COMMENT '交易对第一个币种ID',
 	`replace_coin_id` int(10) NOT NULL COMMENT '交易对第二个币种ID',
 	`price` decimal(40, 18) NOT NULL DEFAULT '0.0000' COMMENT '成交价格',
 	`success_count` decimal(40, 18) NOT NULL DEFAULT '0.0000' COMMENT '委托总数量',
-	`type` tinyint(2) NOT NULL DEFAULT '0' COMMENT '0：买入 1：卖出',
+	`direction` tinyint(2) NOT NULL DEFAULT '0' COMMENT '1：买入 -1：卖出',
 	`created_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间,成交时间',
 	`updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 	PRIMARY KEY (`id`)

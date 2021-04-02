@@ -13,10 +13,11 @@ import com.whoiszxl.tues.common.utils.IdWorker;
 import com.whoiszxl.tues.member.dao.MemberWalletDao;
 import com.whoiszxl.tues.member.entity.UmsMemberWallet;
 import com.whoiszxl.tues.member.service.MemberWalletService;
-import com.whoiszxl.tues.trade.dao.OmsDealDao;
 import com.whoiszxl.tues.trade.dao.OmsOrderDao;
+import com.whoiszxl.tues.trade.dao.OmsOrderDetailDao;
 import com.whoiszxl.tues.trade.entity.OmsDeal;
 import com.whoiszxl.tues.trade.entity.OmsOrder;
+import com.whoiszxl.tues.trade.entity.OmsOrderDetail;
 import com.whoiszxl.tues.trade.entity.dto.OmsDealDTO;
 import com.whoiszxl.tues.trade.entity.dto.OmsOrderDTO;
 import com.whoiszxl.tues.trade.entity.dto.OmsPairDTO;
@@ -30,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,7 +55,7 @@ public class OrderServiceImpl implements OrderService {
     private OmsOrderDao orderDao;
 
     @Autowired
-    private OmsDealDao dealDao;
+    private OmsOrderDetailDao orderDetailDao;
 
     @Autowired
     private PairService pairService;
@@ -120,12 +122,6 @@ public class OrderServiceImpl implements OrderService {
         return BeanCopierUtils.copyListProperties(orderList, OmsOrderDTO::new);
     }
 
-    @Override
-    public List<OmsDealDTO> listDeal(Long memberId, Long orderId) {
-        List<OmsDeal> dealList = dealDao.findAllByMemberIdAndOrderIdOrderByIdDesc(memberId, orderId);
-        return BeanCopierUtils.copyListProperties(dealList, OmsDealDTO::new);
-    }
-
     /**
      * 传入参数获取到需要校验的币种ID和操作金额
      * @param orderParam 检验参数
@@ -190,7 +186,6 @@ public class OrderServiceImpl implements OrderService {
 
         refundBalance(order, volume, turnover);
 
-
     }
 
 
@@ -226,17 +221,92 @@ public class OrderServiceImpl implements OrderService {
             memberWalletDao.unlockBalance(order.getMemberId(), coinId, refundBalance);
         }
 
-        //处理资金流转，买增额，卖增量
-        if(order.getDirection().equals(BuySellEnum.BUY.getValue())) {
-            memberWalletDao.subLockBalance(order.getMemberId(), order.getReplaceCoinId(), turnover);
+        //处理资金流转，买增额，卖增量  （在处理交易详情的时候做此操作）
+//        if(order.getDirection().equals(BuySellEnum.BUY.getValue())) {
+//            memberWalletDao.subLockBalance(order.getMemberId(), order.getReplaceCoinId(), turnover);
+//
+//            //判断是否存在，不存在则新增
+//            memberWalletService.addBalance(order.getMemberId(), order.getCoinId(), order.getCoinId().toString(), volume);
+//        }else {
+//            memberWalletDao.subLockBalance(order.getMemberId(), order.getCoinId(), volume);
+//
+//            //判断是否存在，不存在则新增
+//            memberWalletService.addBalance(order.getMemberId(), order.getReplaceCoinId(), order.getReplaceCoinId().toString(), turnover);
+//        }
+    }
 
-            //判断是否存在，不存在则新增
-            memberWalletService.addBalance(order.getMemberId(), order.getCoinId(), order.getCoinId().toString(), volume);
-        }else {
-            memberWalletDao.subLockBalance(order.getMemberId(), order.getCoinId(), volume);
-
-            //判断是否存在，不存在则新增
-            memberWalletService.addBalance(order.getMemberId(), order.getReplaceCoinId(), order.getReplaceCoinId().toString(), turnover);
+    @Override
+    public void handleDealSuccess(OmsDeal omsDeal) {
+        OmsOrder buyOrder = orderDao.findById(omsDeal.getBuyOrderId());
+        OmsOrder sellOrder = orderDao.findById(omsDeal.getSellOrderId());
+        if(buyOrder == null || sellOrder == null) {
+            log.error("买或卖单不存在");
+            return;
         }
+
+        OmsPairDTO pair = pairService.getPairByName(omsDeal.getPairName());
+        processOrderAndDeal(buyOrder, omsDeal, pair);
+        processOrderAndDeal(sellOrder, omsDeal, pair);
+
+    }
+
+    /**
+     * 处理订单和订单详情信息
+     * @param order 待处理订单信息
+     * @param deal 订单详情
+     * @param pair 交易对信息
+     */
+    private void processOrderAndDeal(OmsOrder order, OmsDeal deal, OmsPairDTO pair) {
+
+        //增加交易详情记录
+        OmsOrderDetail detail = new OmsOrderDetail();
+        detail.setId(idWorker.nextId());
+        detail.setOrderId(order.getId());
+        detail.setPrice(deal.getPrice());
+        detail.setVolume(deal.getSuccessCount());
+
+        BigDecimal turnover, fee;
+        if (order.getDirection().equals(BuySellEnum.BUY.getValue())) {
+            turnover = deal.getBuyTurnover();
+        } else {
+            turnover = deal.getSellTurnover();
+        }
+        detail.setTurnover(turnover);
+
+        if (order.getDirection().equals(BuySellEnum.BUY.getValue())) {
+            fee = deal.getSuccessCount().multiply(pair.getBuyerFee());
+        } else {
+            fee = turnover.multiply(pair.getBuyerFee());
+        }
+        detail.setFee(fee);
+        LocalDateTime now = dateProvider.now();
+        detail.setCompletedAt(now);
+        detail.setCreatedAt(now);
+        detail.setUpdatedAt(now);
+
+        orderDetailDao.save(detail);
+
+
+        //处理资金流转，买增额，卖增量,扣除手续费
+        BigDecimal incomeBalance;
+        if (BuySellEnum.BUY.getValue().equals(order.getDirection())) {
+            incomeBalance = deal.getSuccessCount().subtract(fee);
+        } else {
+            incomeBalance = turnover.subtract(fee);
+        }
+
+        //买入则增加第一个币种，卖出则增加第二个币种
+        Integer incomeCoinId = BuySellEnum.BUY.getValue().equals(order.getDirection()) ?
+                order.getCoinId() : order.getReplaceCoinId();
+        memberWalletService.addBalance(order.getMemberId(), incomeCoinId, incomeCoinId.toString(), incomeBalance);
+
+        //减少锁定的币
+        Integer lockCoinId = BuySellEnum.BUY.getValue().equals(order.getDirection()) ?
+                order.getReplaceCoinId() : order.getCoinId();
+
+        BigDecimal lockBalance = BuySellEnum.BUY.getValue().equals(order.getDirection()) ?
+                turnover : deal.getSuccessCount();
+
+        memberWalletDao.subLockBalance(order.getMemberId(), lockCoinId, lockBalance);
     }
 }

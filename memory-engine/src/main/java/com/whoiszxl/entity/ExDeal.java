@@ -37,6 +37,12 @@ public class ExDeal implements Serializable {
     /** 成交价格 */
     private BigDecimal price;
 
+    /** 买方总量 */
+    private BigDecimal buyTurnover;
+
+    /** 卖方总量 */
+    private BigDecimal sellTurnover;
+
     /** 委托总数量 */
     private BigDecimal successCount;
 
@@ -44,7 +50,7 @@ public class ExDeal implements Serializable {
     private Integer direction;
 
     /** 创建时间 */
-    private LocalDateTime time;
+    private LocalDateTime createdAt;
 
 
 }

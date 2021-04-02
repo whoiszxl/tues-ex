@@ -1,5 +1,6 @@
 package com.whoiszxl.tues.trade.consumer;
 
+import com.google.gson.reflect.TypeToken;
 import com.whoiszxl.tues.common.mq.MessageTypeConstants;
 import com.whoiszxl.tues.common.utils.JsonUtil;
 import com.whoiszxl.tues.trade.entity.dto.OrderMessageDTO;
@@ -31,16 +32,20 @@ public class MemoryEngineConsumer {
 
 
     @KafkaListener(topics = MessageTypeConstants.HANDLE_ORDER_SUCCESS, groupId = "default-group")
-    public void handleOrderSuccess(List<ConsumerRecord<String, String>> records,
-                                   Acknowledgment ack,
-                                   @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
+    public void handleOrderSuccess(ConsumerRecord<String, String> record,
                                    Consumer consumer) {
         try{
-            for (ConsumerRecord<String, String> record : records) {
-                OrderMessageDTO orderInfo = JsonUtil.fromJson(record.value(), OrderMessageDTO.class);
-                orderService.handleOrderSuccess(orderInfo.getOrderId(), orderInfo.getVolume(), orderInfo.getTurnover());
-            }
+            List<OrderMessageDTO> orderList = JsonUtil.fromJsonToList(record.value(),
+                    new TypeToken<List<OrderMessageDTO>>() {
+                    }.getType());
 
+            for (OrderMessageDTO orderInfo : orderList) {
+                orderService.handleOrderSuccess(
+                        orderInfo.getOrderId(),
+                        orderInfo.getVolume(),
+                        orderInfo.getTurnover());
+            }
+            consumer.commitSync();
         }catch(Exception e) {
             log.error("handleOrderSuccess处理订单成功撮合消息失败", e);
         }
@@ -50,8 +55,6 @@ public class MemoryEngineConsumer {
 
     @KafkaListener(topics = MessageTypeConstants.HANDLE_DEAL_SUCCESS, groupId = "default-group")
     public void handleDealSuccess(List<ConsumerRecord<String, String>> record,
-                                  Acknowledgment ack,
-                                  @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                                   Consumer consumer) {
 
     }

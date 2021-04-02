@@ -12,6 +12,7 @@ import com.whoiszxl.tues.common.utils.DateProvider;
 import com.whoiszxl.tues.common.utils.IdWorker;
 import com.whoiszxl.tues.member.dao.MemberWalletDao;
 import com.whoiszxl.tues.member.entity.UmsMemberWallet;
+import com.whoiszxl.tues.member.service.MemberWalletService;
 import com.whoiszxl.tues.trade.dao.OmsDealDao;
 import com.whoiszxl.tues.trade.dao.OmsOrderDao;
 import com.whoiszxl.tues.trade.entity.OmsDeal;
@@ -44,6 +45,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private MemberWalletDao memberWalletDao;
+
+    @Autowired
+    private MemberWalletService memberWalletService;
 
     @Autowired
     private OmsOrderDao orderDao;
@@ -96,6 +100,8 @@ public class OrderServiceImpl implements OrderService {
         order.setPrice(orderParam.getPrice());
         order.setTotalCount(orderParam.getCount());
         order.setCurrentCount(orderParam.getCount());
+        order.setTurnover(BigDecimal.ZERO);
+        order.setVolume(BigDecimal.ZERO);
         order.setDirection(buyOrSell);
         order.setType(OrderTypeEnum.LIMIT.getValue());
         order.setStatus(OrderStatusEnum.TRADE_OPEN.getValue());
@@ -174,13 +180,13 @@ public class OrderServiceImpl implements OrderService {
         if(!OrderStatusEnum.TRADE_OPEN.getValue().equals(order.getStatus())) {
             return;
         }
+        order.setVolume(volume);
         order.setTurnover(turnover);
         order.setCurrentCount(BigDecimal.ZERO);
         order.setStatus(OrderStatusEnum.TRADE_CLOSE.getValue());
         order.setCompletedAt(dateProvider.now());
         order.setUpdatedAt(dateProvider.now());
         orderDao.updateOrder(order);
-
 
         refundBalance(order, volume, turnover);
 
@@ -200,13 +206,13 @@ public class OrderServiceImpl implements OrderService {
      * @param turnover 总额
      **/
     private void refundBalance(OmsOrder order, BigDecimal volume, BigDecimal turnover) {
-        BigDecimal actualBalance, freezeBalance;
+        BigDecimal actualBalance, lockBalance;
         //如果是买单，冻结的数量则是当前单的委托总数*委托价格，实际数量则是撮合返回的交易总额
         if(order.getDirection().equals(BuySellEnum.BUY.getValue())) {
-            freezeBalance = order.getTotalCount().multiply(order.getPrice());
+            lockBalance = order.getTotalCount().multiply(order.getPrice());
             actualBalance = turnover;
         }else {
-            freezeBalance = order.getTotalCount();
+            lockBalance = order.getTotalCount();
             actualBalance = volume;
         }
 
@@ -214,9 +220,23 @@ public class OrderServiceImpl implements OrderService {
         Integer coinId = order.getDirection().equals(BuySellEnum.SELL.getValue()) ? order.getCoinId() : order.getReplaceCoinId();
 
         //将此笔订单冻结的金额减去实际成交额
-        BigDecimal refundBalance = freezeBalance.subtract(actualBalance);
+        BigDecimal refundBalance = lockBalance.subtract(actualBalance);
         if(refundBalance.compareTo(BigDecimal.ZERO) > 0) {
+            //退回差价
             memberWalletDao.unlockBalance(order.getMemberId(), coinId, refundBalance);
+        }
+
+        //处理资金流转，买增额，卖增量
+        if(order.getDirection().equals(BuySellEnum.BUY.getValue())) {
+            memberWalletDao.subLockBalance(order.getMemberId(), order.getReplaceCoinId(), turnover);
+
+            //判断是否存在，不存在则新增
+            memberWalletService.addBalance(order.getMemberId(), order.getCoinId(), order.getCoinId().toString(), volume);
+        }else {
+            memberWalletDao.subLockBalance(order.getMemberId(), order.getCoinId(), volume);
+
+            //判断是否存在，不存在则新增
+            memberWalletService.addBalance(order.getMemberId(), order.getReplaceCoinId(), order.getReplaceCoinId().toString(), turnover);
         }
     }
 }

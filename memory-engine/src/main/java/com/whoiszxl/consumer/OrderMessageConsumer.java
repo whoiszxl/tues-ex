@@ -12,7 +12,6 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
@@ -29,10 +28,10 @@ public class OrderMessageConsumer {
 
     @KafkaListener(topics = MessageTypeConstants.NEW_ORDER, groupId = "default-group")
     public void newOrderSub(ConsumerRecord<String, String> record,
-                            Acknowledgment ack,
                             @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                             Consumer consumer) {
-        log.info("订阅到新订单，开始处理, 主题为：{}， ack为：{}， 消息值为：{}", topic, ack, record.value());
+        consumer.commitSync();
+        log.info("订阅到新订单，开始处理, 主题为：{}， 消息值为：{}", topic, record.value());
         ExOrder exOrder = JsonUtil.fromJson(record.value(), ExOrder.class);
         if(ObjectUtils.isEmpty(exOrder) || exOrder.getOrderId() == null) {
             return;
@@ -66,7 +65,7 @@ public class OrderMessageConsumer {
 
 
     @KafkaListener(topics = MessageTypeConstants.CANCEL_ORDER)
-    public void cancelOrderSub(ConsumerRecord<String, String> record, Acknowledgment ack, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+    public void cancelOrderSub(ConsumerRecord<String, String> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
     }
 

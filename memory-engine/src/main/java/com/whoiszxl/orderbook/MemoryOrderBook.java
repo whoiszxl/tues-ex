@@ -164,7 +164,8 @@ public class MemoryOrderBook implements OrderBook {
         }
 
         //判断当前订单是否完成了撮合
-        if(targetOrder.getCurrentCount().subtract(allCount).compareTo(BigDecimal.ZERO) == 0) {
+        targetOrder.setCurrentCount(targetOrder.getCurrentCount().subtract(allCount));
+        if(targetOrder.getCurrentCount().compareTo(BigDecimal.ZERO) == 0) {
             allCompletedOrderList.add(targetOrder);
         }
 

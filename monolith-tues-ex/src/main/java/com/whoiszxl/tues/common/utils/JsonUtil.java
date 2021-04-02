@@ -1,6 +1,11 @@
 package com.whoiszxl.tues.common.utils;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
+import java.io.Reader;
+import java.io.StringReader;
+import java.lang.reflect.Type;
 
 /**
  * json解析工具
@@ -11,6 +16,10 @@ public class JsonUtil {
 
     public static <T> T fromJson(String json, Class<T> classOfT) {
         return gson.fromJson(json, classOfT);
+    }
+
+    public static <T> T fromJsonToList(String json, Type typeOfT) throws JsonSyntaxException {
+        return gson.fromJson(json, typeOfT);
     }
 
     public static String toJson(Object src) {

@@ -21,11 +21,11 @@ public interface OrderBucket extends Comparable<OrderBucket> {
     void addOrder(ExOrder exOrder);
 
     /**
-     * 从订单桶中删除订单并返回此笔订单
+     * 从订单桶中删除订单
      * @param orderId 订单ID
-     * @return
+     * @return bucket是否清空
      */
-    ExOrder removeOrder(Long orderId);
+    boolean removeOrder(Long orderId);
 
     /**
      * 获取当前订单桶的价格
@@ -64,5 +64,4 @@ public interface OrderBucket extends Comparable<OrderBucket> {
      * @return
      */
     BucketMatchResult match(BigDecimal matchCount, ExOrder exOrder, Consumer<ExOrder> removeOrderCallback);
-
 }

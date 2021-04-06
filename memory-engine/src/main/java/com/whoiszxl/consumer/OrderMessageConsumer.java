@@ -30,7 +30,6 @@ public class OrderMessageConsumer {
     public void newOrderSub(ConsumerRecord<String, String> record,
                             @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                             Consumer consumer) {
-        consumer.commitSync();
         log.info("订阅到新订单，开始处理, 主题为：{}， 消息值为：{}", topic, record.value());
         ExOrder exOrder = JsonUtil.fromJson(record.value(), ExOrder.class);
         if(ObjectUtils.isEmpty(exOrder) || exOrder.getOrderId() == null) {
@@ -65,8 +64,33 @@ public class OrderMessageConsumer {
 
 
     @KafkaListener(topics = MessageTypeConstants.CANCEL_ORDER)
-    public void cancelOrderSub(ConsumerRecord<String, String> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+    public void cancelOrderSub(ConsumerRecord<String, String> record,
+                               @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
+                               Consumer consumer) {
+        log.info("订阅到取消订单消息，开始处理, 主题为：{}， 消息值为：{}", topic, record.value());
 
+        ExOrder exOrder = JsonUtil.fromJson(record.value(), ExOrder.class);
+        if(ObjectUtils.isEmpty(exOrder) || exOrder.getOrderId() == null) {
+            return;
+        }
+
+        OrderBook orderBook = orderBookFactory.getOrderBook(exOrder.getPairName());
+
+        if(orderBook.getReady()) {
+            //开始执行取消订单逻辑
+            try {
+                long startTime = System.currentTimeMillis();
+                Result result = orderBook.cancelOrder(exOrder);
+                long endTime = System.currentTimeMillis();
+                if(result.isOk()) {
+                    consumer.commitSync();
+                    log.info("取消订单成功，订单ID={}, 耗时：{}ms", exOrder.getOrderId(), endTime - startTime);
+                    return;
+                }
+            }catch (Exception e) {
+                log.error("取消订单失败", e);
+            }
+        }
     }
 
 }

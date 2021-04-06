@@ -222,7 +222,26 @@ public class MemoryOrderBook implements OrderBook {
 
 
     @Override
-    public Result cancelOrder(Long orderId) {
+    public Result cancelOrder(ExOrder exOrder) {
+        //获取到订单方向的订单桶集合
+        NavigableMap<BigDecimal, OrderBucket> buckets =
+                exOrder.getDirection().equals(BuySellEnum.BUY.getValue()) ? buyLimitPriceBuckets : sellLimitPriceBuckets;
+
+        synchronized (buckets) {
+            //通过价格获取到订单桶
+            OrderBucket orderBucket = buckets.get(exOrder.getPrice());
+            if(orderBucket != null) {
+                boolean bucketNeedRemove = orderBucket.removeOrder(exOrder.getOrderId());
+
+                if(bucketNeedRemove) {
+                    buckets.remove(exOrder.getPrice());
+                }
+
+                //TODO SEND MSG
+            }
+        }
+
+
         return null;
     }
 

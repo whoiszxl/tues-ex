@@ -40,7 +40,7 @@ public interface OrderBook {
      * @param orderId 订单ID
      * @return
      */
-    Result cancelOrder(Long orderId);
+    Result cancelOrder(ExOrder exOrder);
 
     /**
      * 添加消息发送工具

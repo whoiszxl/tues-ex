@@ -23,27 +23,31 @@ public class MemoryOrderBucket implements OrderBucket {
     /** 当前价格的总量 */
     private BigDecimal totalCount = BigDecimal.ZERO;
 
-    private LinkedHashMap<BigDecimal, ExOrder> orders = new LinkedHashMap<>();
-
+    /** 订单桶中的订单集合，key为订单ID，value为订单信息 */
+    private LinkedHashMap<Long, ExOrder> orders = new LinkedHashMap<>();
 
     @Override
     public void addOrder(ExOrder exOrder) {
-        orders.put(exOrder.getPrice(), exOrder);
+        orders.put(exOrder.getOrderId(), exOrder);
         //将通过了预撮合的订单剩余的数量加到订单桶的总量中去
         totalCount = totalCount.add(exOrder.getCurrentCount());
     }
 
     @Override
-    public ExOrder removeOrder(Long orderId) {
+    public boolean removeOrder(Long orderId) {
         ExOrder exOrder = orders.get(orderId);
         if(exOrder == null) {
-            return null;
+            return false;
         }
         orders.remove(orderId);
 
+        if(orders.size() == 0) {
+            return true;
+        }
+
         //移除订单后需要将订单剩余数量从订单桶总量中减去
         totalCount = totalCount.subtract(exOrder.getCurrentCount());
-        return exOrder;
+        return false;
     }
 
     @Override
@@ -75,7 +79,7 @@ public class MemoryOrderBucket implements OrderBucket {
      */
     @Override
     public BucketMatchResult match(BigDecimal matchCount, ExOrder targetOrder, Consumer<ExOrder> removeOrderCallback) {
-        Iterator<Map.Entry<BigDecimal, ExOrder>> iterator = orders.entrySet().iterator();
+        Iterator<Map.Entry<Long, ExOrder>> iterator = orders.entrySet().iterator();
         BigDecimal allMatchCount = BigDecimal.ZERO;
 
         List<ExDeal> dealList = new ArrayList<>();
@@ -83,7 +87,7 @@ public class MemoryOrderBucket implements OrderBucket {
 
         while(iterator.hasNext() && matchCount.compareTo(BigDecimal.ZERO) > 0) {
             //遍历拿到订单桶中的订单详情
-            Map.Entry<BigDecimal, ExOrder> next = iterator.next();
+            Map.Entry<Long, ExOrder> next = iterator.next();
             ExOrder otherOrder = next.getValue();
 
             //计算流转过来的订单可以在订单桶中的这笔单中吃多少量
